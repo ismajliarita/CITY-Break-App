@@ -1,0 +1,32 @@
+.card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    border: 2px solid black;
+    padding: 10px;
+}
+
+.card--button-customise{
+    width: 220px;
+    height: 30px;
+    margin-top: 10px;
+}
+
+.card--button-counter{
+    display: flex;
+    width: 200px; 
+    height: 30px;
+    margin-top: 10px;
+    padding-inline: 10px;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid black;
+}
+
+.card--button-add{
+    width: 220px;
+    height: 30px;
+    margin-top: 10px;
+}
