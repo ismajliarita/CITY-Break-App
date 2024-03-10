@@ -1,41 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react'
+import {ChakraProvider} from "@chakra-ui/react";
 import ItemCard from './components/ItemCard';
+import NavBar from './components/NavBar';
+import SelectItems from './components/SelectItems';
+import './style.css';
 
 export default function App() {
 
-  const [backendData, setBackendData] = useState([{}]);
-
-  useEffect(() => {
-    fetch("http://localhost:8081/api")
-    .catch(error => console.error('Fetch error:', error))
-    .then((response) => {
-      console.log("response.status =", response.status); // response.status = 200
-      return response.blob();
-    })
-    .then(response => {
-        console.log(response);
-        return response.json()
-      }
-    ).then((data) => {
-      setBackendData(data);
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-  }, [])
+  function handleFile(event) {
+    const file = event.target.files[0];
+  }
 
   return (
-    <div>
-      {(typeof backendData.items === 'undefined') ? (
-        <p>Loading...</p>
-      ) : (
-        backendData.items.map((item, i) => (
-          <p key={i}>{item}</p>
-        ))
-      )}
-
-      <ItemCard />
-    </div>
+    <ChakraProvider>
+      <NavBar />
+      <SelectItems />
+    </ChakraProvider>
   );
 }
 

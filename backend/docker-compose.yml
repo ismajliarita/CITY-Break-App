@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+  db2: 
+    image: mysql
+    # command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: city-break-app
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+    ports:
+      - 10100:3306
+
+  adminer2:  # Changed from 'adminer' to 'adminer2'
+    image: adminer
+    restart: always
+    ports:
+      - 10101:8080

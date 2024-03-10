@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "root",
+    "password": "mysql",
+    "database": "city-break-app",
+    "host": "localhost",
+    "port": 10100,
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "mysql",
+    "database": "city-break-app",
+    "host": "localhost",
+    "port": 10100,
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "mysql",
+    "database": "city-break-app",
+    "host": "localhost",
+    "port": 10100,
+    "dialect": "mysql"
+  }
+}

@@ -1,12 +1,27 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const app = express();
+const apiRouter = express.Router();
+
+const itemsRoutes = require('./routes/itemsRoutes');
 
 app.use(cors());
 
-app.get('/api', (req, res) => {
-  return res.json({ "items" : ["item1", "item2", "item3", "item4"] });
-});
+
+apiRouter.use('/items', itemsRoutes);
+
+app.use(bodyParser.json());
+app.use("/api", apiRouter);
+
+
+// app.get('/api', (req, res) => {
+//   return res.json({ "items" : ["item1", "item2", "item3", "item4"] });
+// });
+
+// app.get('/api/items', (req, res) => {
+//   return res.json({ "items" : ["item1", "item2", "item3", "item4"] });
+// });
 
 
 // const mysql = require('mysql');
