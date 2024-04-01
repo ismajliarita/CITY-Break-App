@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       item_name: {
-        type: DataTypes.STRING(25),
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       image:{
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       description: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
       price: {

@@ -7,8 +7,25 @@ async function getItems(req, res) {
 
 async function createItem(request, response, next) {
   try{
-    const item = await ItemRepo.createItem(request.body);
-    response.status(200).json({ data: item });
+    // console.log(request.body, "  controller");
+    const itemData = {
+      ...request.body,
+      image: request.file.buffer,
+    };
+    const item = await ItemRepo.createItem(itemData);
+    response.status(200).json({ data: item	 });
+  }catch(error){
+    next(error);
+  }
+}
+
+async function getItemImage(request, response, next) {
+  try{
+    const id = request.params.id;
+    console.log(id);
+    const item = await ItemRepo.getItem(id);
+    response.set('Content-Type', 'image/png');
+    response.send(item.image);
   }catch(error){
     next(error);
   }
@@ -17,4 +34,5 @@ async function createItem(request, response, next) {
 module.exports = {
   getItems,
   createItem,
+  getItemImage,
 };

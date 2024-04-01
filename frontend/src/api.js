@@ -51,12 +51,21 @@ export async function getItems() {
   // .then((response) => response.data);
 }
 
-export async function createItem(item) {
-  return sendRequest(`${BACKEND_URL}/create-item`, {
-    method: "POST",
-    body: item,
-  }).then((response) => response.data);
+// This request will change to not change application JSON for body, but to use formdata
+export async function createItem(e) {
+  // Get the form data
+  const formData = new FormData(e.target);
+
+  // Send the form data to the server
+  return fetch(`${BACKEND_URL}/items/create-item`, {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(response => response.data)
 }
+
+//
 
 export async function getItem(itemId) {
   return sendRequest(`${BACKEND_URL}/items/:id`, {

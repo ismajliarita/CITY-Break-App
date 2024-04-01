@@ -8,7 +8,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState, useRef } from 'react';
-import {  } from '../api';
+import { createItem } from '../api';
 import ItemCard from './ItemCard';
 
 export default function SelectItems () {
@@ -32,9 +32,9 @@ export default function SelectItems () {
       const fileSize = file.size; // get file size
   
       // validate file type
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']; // add more types as needed
+      const allowedTypes = ['image/jpeg', 'image/png']; 
       if (!allowedTypes.includes(fileType)) {
-        alert('Invalid file type. Only JPEG, PNG, and GIF types are allowed.');
+        alert('Invalid file type. Only JPEG and PNG types are allowed.');
         fileInputRef.current.value = ''; 
         return;
       }
@@ -59,24 +59,22 @@ export default function SelectItems () {
     }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent the browser's default form submission
+    
+    createItem(e)
+      .then((response) => {
+        console.log(response);
+      })
+
+    // console.log(formData);
     fileInputRef.current.value = ''; 
     setFormData({});
   }
 
   return (
     <Flex>
-      <ItemCard />
-
-
-
-
-
-
-
-
+      {/* <ItemCard /> */}
 
 
 

@@ -1,6 +1,8 @@
-import database from "../models";
+const db = require("../models");
+const { DataTypes } = require('sequelize');
+// const sequelize = require('./path/to/sequelize/instance');
 
-const Item = database.item;
+const Item = db.Item;
 
 const ItemRepo = {
   // async getItems() {
@@ -45,15 +47,26 @@ const ItemRepo = {
   // },
 
 
-  async createItem(item) {
-    return await Item.create(
-      {
-        item_name: item.name,
-        image: item.image,
-        description: item.description,
-        price: item.price,
-      }
-    );
+
+  async createItem(itemData) {
+    try {
+      const { name, description, price, image } = itemData;
+      // const image = imageToBase64(imagePath);
+
+      const item = await Item.create({
+        item_name: name,
+        image,
+        description,
+        price,
+      });
+      return await item.save();
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async getItem(itemId){
+    return await Item.findByPk(itemId);
   }
 }
 
