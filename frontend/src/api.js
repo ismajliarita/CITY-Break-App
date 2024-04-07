@@ -45,10 +45,9 @@ export async function getItems() {
   return sendRequest(`${BACKEND_URL}/items`, {
     method: "GET",
   }).then((response) => {
-    console.log(response.items);
+    // console.log(response.items);
     return response.items;
   });
-  // .then((response) => response.data);
 }
 
 // This request will change to not change application JSON for body, but to use formdata

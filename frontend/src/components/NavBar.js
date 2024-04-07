@@ -1,7 +1,8 @@
 import React from "react";
 import "../style.css";
-import { Flex, Image } from "@chakra-ui/react";
+import { Flex, Image, Text } from "@chakra-ui/react";
 import Logo from "../media/city_logo.png";
+import { Link } from "react-router-dom";
 
 export default function NavBar() {
     return(
@@ -11,15 +12,21 @@ export default function NavBar() {
           justifyContent="space-between"
           alignItems="center"
         >
-            <div> 
-              <Image src={Logo} height={"50px"}></Image> 
-                {/* <img src={Logo} className="logo" alt='logo image: City Break Cafe'/> */}
-            </div>
-            {/* <div className="hamburger-menu active">
-                <div className="ham-bar bar-top"></div>
-                <div className="ham-bar bar-mid"></div>
-                <div className="ham-bar bar-bot"></div>
-            </div> */}
+          <Link to="/">
+            <Image src={Logo} height={"50px"}></Image> 
+          </Link>
+          <Flex
+            color="#cccccc"
+            fontSize="1.5rem"
+            justifyContent="space-between"
+            width="45%"
+            marginRight={"28%"}
+           >
+            <Text><Link to="/create-order">New Order</Link></Text>
+            <Text><Link to="/view-items">Items</Link></Text>
+            <Text><Link to="/incoming-orders">Incoming Orders</Link></Text>
+            <Text><Link to="/order-history">Order History</Link></Text>
+          </Flex>
         </Flex>
     );
 }

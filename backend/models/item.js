@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       image:{
-        type: DataTypes.BLOB,
+        type: DataTypes.BLOB('long'),
         allowNull: true,
       },
       description: {
@@ -26,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
       price: {
         type: DataTypes.DECIMAL(5, 2),
         allowNull: false,
+      },
+      amount:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       createdAt: {
         type: DataTypes.DATE,

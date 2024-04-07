@@ -20,7 +20,7 @@ const upload = multer({
 });
 
 itemsRouter.get(
-  "/",
+  "/get-items",
   ItemsController.getItems
 );  
 

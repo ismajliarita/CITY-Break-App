@@ -30,7 +30,7 @@ export default function ItemCard (props) {
       flexDirection="column"
       align-items="center"
       width="275px"
-      height="435px"
+      height="510px"
       justifyContent="center" 
       alignItems={"center"}
       alignContent={"center"}   

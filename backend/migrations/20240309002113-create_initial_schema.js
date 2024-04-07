@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       image:{
-        type: Sequelize.BLOB,
+        type: Sequelize.BLOB('long'),
         allowNull: true,
       },
       description: {
@@ -24,6 +24,11 @@ module.exports = {
       price: {
         type: Sequelize.DECIMAL(5, 2),
         allowNull: false,
+      },
+      amount: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       createdAt: {
         type: Sequelize.DATE,

@@ -46,7 +46,9 @@ const ItemRepo = {
   //   ];
   // },
 
-
+  async getItems() {
+    return await Item.findAll();
+  },
 
   async createItem(itemData) {
     try {
