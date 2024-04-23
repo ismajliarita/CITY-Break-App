@@ -7,6 +7,7 @@ import {
 export default function IncomingOrders() {
   return (
     <Flex
+      bg={"#a8a3a3"}
       justifyContent={"center"}
      >
       <Text 

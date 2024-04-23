@@ -19,6 +19,8 @@ const upload = multer({
   }
 });
 
+//   ROUTES
+
 itemsRouter.get(
   "/get-items",
   ItemsController.getItems
@@ -28,45 +30,23 @@ itemsRouter.post(
   "/create-item",
   upload.single("image"),
   ItemsController.createItem
-  // async (req, res) => {
-
-  //   const buffer = req.file.buffer;
-
-
-
-
-  //   // const buffer =  Buffer.from(req.body.image, 'base64');
-    
-  //   fs.writeFile(path.join(__dirname, "arita.png"), buffer, (err) => {
-  //     if (err) {
-  //       return res.status(500).json({ error: err.message });
-  //     }
-      
-  //     res.status(200).json({ data: req.body.name, imagePath: "arita.png" });
-  //   });
-  // }
 );
 
 itemsRouter.get(
   '/:id/image',
   ItemsController.getItemImage,
-  // (req, res) => {
-  // const id = req.params.id;
-
-
-
-  // const imagePath = path.join(__dirname, 'arita.png');
-  
-  // // Set the Content-Type header to image/png
-  // res.setHeader('Content-Type', 'image/png');
-
-  // // Send the image file as a response
-  // res.sendFile(imagePath, (err) => {
-  //   if (err) {
-  //     res.status(500).json({ error: err.message });
-  //   }
-  // });
-// }
 );
+
+itemsRouter.get(
+  '/get-item/:id',
+  ItemsController.getItemById,
+);
+
+itemsRouter.patch(
+  '/subtract-amount/:id',
+  ItemsController.subtractAmount,
+);
+
+
 
 module.exports = itemsRouter;

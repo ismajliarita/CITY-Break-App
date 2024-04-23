@@ -1,18 +1,21 @@
-const ItemRepo = require("../repositories/itemsRepository");
+const ItemsRepo = require("../repositories/itemsRepository");
 
-async function getItems(req, res) {
-  const items = await ItemRepo.getItems();
-  return res.json({ items });
+async function getItems(req, res, next) {
+  try{
+    const items = await ItemsRepo.getItems();
+    res.status(200).json({ data: items });
+  }catch(error){
+    next(error);
+  }
 }
 
 async function createItem(request, response, next) {
   try{
-    // console.log(request.body, "  controller");
     const itemData = {
       ...request.body,
       image: request.file.buffer,
     };
-    const item = await ItemRepo.createItem(itemData);
+    const item = await ItemsRepo.createItem(itemData);
     response.status(200).json({ data: item	 });
   }catch(error){
     next(error);
@@ -22,10 +25,30 @@ async function createItem(request, response, next) {
 async function getItemImage(request, response, next) {
   try{
     const id = request.params.id;
-    console.log(id);
-    const item = await ItemRepo.getItem(id);
+    const item = await ItemsRepo.getItemImage(id);
     response.set('Content-Type', 'image/png');
     response.send(item.image);
+  }catch(error){
+    next(error);
+  }
+}
+
+async function getItemById(request, response, next) {
+  try{
+    const id = request.params.id;
+    const item = await ItemsRepo.getItemById(id);
+    response.status(200).json({ data: item });
+  }catch(error){
+    next(error);
+  }
+}
+
+async function subtractAmount(request, response, next) {
+  try{
+    const id = request.params.id;
+    const item = await ItemsRepo.subtractAmount(id);
+
+    response.status(200).json({ data: item });
   }catch(error){
     next(error);
   }
@@ -35,4 +58,6 @@ module.exports = {
   getItems,
   createItem,
   getItemImage,
+  getItemById,
+  subtractAmount,
 };

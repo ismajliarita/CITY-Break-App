@@ -10,8 +10,11 @@
     font-style: normal;
 }
 
+body{
+  background-color: #a8a3a3;
+}
+
 
 #root{
-  background-color: #a8a3a3;
   height: 100vh;
 }

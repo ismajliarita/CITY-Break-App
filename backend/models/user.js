@@ -2,35 +2,33 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Order extends Model {}
+  class User extends Model {}
 
-  Order.init(
+  User.init(
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      order_date: {
-        type: DataTypes.DATE,
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      total_cost: {
-        type: DataTypes.DECIMAL(5, 2),
-        allowNull: false,
-      },
-      isFinished: {
+      isAdmin: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
-      },
-      user_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'User',
-          key: 'id',
-        },
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -45,8 +43,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Order",
+      modelName: "User",
     }
   );
-  return Order;
+  return User;
 };

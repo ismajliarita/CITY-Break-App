@@ -15,17 +15,46 @@ export default function NavBar() {
           <Link to="/">
             <Image src={Logo} height={"50px"}></Image> 
           </Link>
+
           <Flex
             color="#cccccc"
             fontSize="1.5rem"
-            justifyContent="space-between"
-            width="45%"
-            marginRight={"28%"}
+            // justifyContent="space-between"
+            // width="20%"
+            // marginRight={"28%"}
+          >
+            <Text
+              marginInline={"20px"}
+            ><Link to="/view-items">Items</Link></Text>
+            <Text
+              marginInline={"20px"}
+            ><Link to="/order-history">Order History</Link></Text>
+
+          </Flex>
+
+          <Flex
+            color="#cccccc"
+            fontSize="1.5rem"
+            // justifyContent="space-between"
+            // width="20%"
+            // marginRight={"28%"}
            >
-            <Text><Link to="/create-order">New Order</Link></Text>
-            <Text><Link to="/view-items">Items</Link></Text>
-            <Text><Link to="/incoming-orders">Incoming Orders</Link></Text>
-            <Text><Link to="/order-history">Order History</Link></Text>
+            <Text
+              marginInline={"20px"}
+            ><Link to="/incoming-orders">Incoming Orders</Link></Text>
+          </Flex>
+          
+          <Flex
+            color="#cccccc"
+            fontSize="1.5rem"
+            // justifyContent="space-between"
+            // width="20%"
+            // marginRight={"28%"}
+          >
+            <Text
+              marginInline={"20px"}
+            ><Link to={"/cart"}>Cart</Link></Text>
+            {/* <Text><Link></Link></Text> */}
           </Flex>
         </Flex>
     );

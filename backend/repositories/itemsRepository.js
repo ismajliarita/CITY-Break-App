@@ -4,62 +4,28 @@ const { DataTypes } = require('sequelize');
 
 const Item = db.Item;
 
-const ItemRepo = {
-  // async getItems() {
-  //   return [
-  //     {
-  //       id: 1,
-  //       name: "Cappuccino",
-  //       price: 3.5,
-  //       image: "cappuccino.png",
-  //     },
-  //     {
-  //       id: 2,
-  //       name: "Latte",
-  //       price: 3.5,
-  //       image: "latte.png",
-  //     },
-  //     {
-  //       id: 3,
-  //       name: "Espresso",
-  //       price: 2.5,
-  //       image: "espresso.png",
-  //     },
-  //     {
-  //       id: 4,
-  //       name: "Mocha",
-  //       price: 4.0,
-  //       image: "mocha.png",
-  //     },
-  //     {
-  //       id: 5,
-  //       name: "Macchiato",
-  //       price: 3.0,
-  //       image: "macchiato.png",
-  //     },
-  //     {
-  //       id: 6,
-  //       name: "Chai Latte",
-  //       price: 4.5,
-  //       image: "chailatte.png",
-  //     },
-  //   ];
-  // },
+const ItemsRepo = {
 
   async getItems() {
-    return await Item.findAll();
+    try{
+      return await Item.findAll({
+        attributes: ['id', 'item_name', 'price', 'description', 'amount'],
+      });
+    } catch(error){
+      throw error;
+    }
   },
 
   async createItem(itemData) {
     try {
-      const { name, description, price, image } = itemData;
-      // const image = imageToBase64(imagePath);
+      const { name, description, price, image, amount } = itemData;
 
       const item = await Item.create({
         item_name: name,
         image,
         description,
         price,
+        amount
       });
       return await item.save();
     } catch (error) {
@@ -67,9 +33,40 @@ const ItemRepo = {
     }
   },
 
-  async getItem(itemId){
-    return await Item.findByPk(itemId);
-  }
+  async getItemImage(itemId){
+    return await Item.findByPk(itemId, {
+      attributes: ['image'],
+    });
+  },
+  
+  async getItemById(itemId){
+    return await Item.findByPk(itemId, {
+      attributes: ['id', 'item_name', 'price', 'description', 'amount'],
+    });
+  },
+
+  async subtractAmount(itemId){
+    try{
+      const item = await Item.findByPk(itemId);
+
+      if (!item) return;
+
+      if (item.amount <= 1){
+        item.set({
+          amount: 0
+        });
+      }else{
+        item.set({
+          amount: item.amount-1
+        })
+      }
+
+      return await item.save();
+    }catch(error){
+      throw error;
+    }
+  },
+
 }
 
-module.exports = ItemRepo;
+module.exports = ItemsRepo;

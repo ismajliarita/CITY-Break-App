@@ -42,12 +42,9 @@ async function sendRequest(url, { method = "GET", body, headers = {} }) {
 }
 
 export async function getItems() {
-  return sendRequest(`${BACKEND_URL}/items`, {
+  return sendRequest(`${BACKEND_URL}/items/get-items`, {
     method: "GET",
-  }).then((response) => {
-    // console.log(response.items);
-    return response.items;
-  });
+  }).then((response) => response.data);
 }
 
 // This request will change to not change application JSON for body, but to use formdata
@@ -64,10 +61,26 @@ export async function createItem(e) {
   .then(response => response.data)
 }
 
-//
+export async function getItemById(itemId) {
+  return sendRequest(`${BACKEND_URL}/items/get-item/${itemId}`, {
+    method: "GET",
+  }).then((response) => response.data);
+}
 
-export async function getItem(itemId) {
-  return sendRequest(`${BACKEND_URL}/items/:id`, {
+export async function subtractAmount(itemId){
+  return sendRequest(`${BACKEND_URL}/items/subtract-amount/${itemId}`, {
+    method: "PATCH",
+  }).then((response) => response.data);
+}
+
+export async function addItemToOrder(itemId){
+  return sendRequest(`${BACKEND_URL}/order/add-item/${itemId}`, {
+    method: "POST",
+  }).then((response) => response.data);
+}
+
+export async function getOrders(){
+  return sendRequest(`${BACKEND_URL}/order/get-orders`, {
     method: "GET",
   }).then((response) => response.data);
 }

@@ -1,22 +1,33 @@
 import React from 'react';
 import {
   Flex,
-  Text
+  Text,
+  useMediaQuery,
 } from "@chakra-ui/react";
+import "../style.css";
 
 export default function OrderHistory() {
+  
   return (
-    <Flex
-      justifyContent={"center"}
-     >
+    <>
       <Text 
+        display={"flex"}
+        bg={"#a8a3a3"}
+        justifyContent={"center"}
         fontSize="3xl" 
         fontWeight="bold" 
         color="grey" 
-        margin="20px" 
+        padding="20px" 
       >
         Order History
       </Text>
-    </Flex>
+      <Flex
+        bg={"#a8a3a3"}
+        width={"auto"}
+        height={"auto"}
+      >
+
+      </Flex>
+    </>
   );
 }

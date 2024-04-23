@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Flex,
   Input,
@@ -9,18 +9,35 @@ import {
   Text
 } from "@chakra-ui/react";
 import { useState, useRef } from 'react';
-import { createItem } from '../api';
-import ItemCard from '../components/ItemCard';
+import { getItemImage, getItems } from '../api';
+// import ItemCard from '../components/ItemCard';
 import AddItemForm from '../components/AllItems/AddItemForm';
-import ItemEditCard from '../components/AllItems/ItemEditCard';
+import ItemCard from '../components/AllItems/ItemCard';
 
 export default function AllItems () {
   
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    getItems()
+      .then((items) => {
+        return Promise.all(
+          items.map(async (item) => {
+            const image = "http://localhost:8081/api/items/" + item.id + "/image"
+            return { ...item, image };
+          })
+        );
+      })
+      .then((itemsWithImages) => {
+        setItems(itemsWithImages);
+      });
+  }, []);
 
   return (
     <Flex  
       flexDirection="column"
       justifyContent={"center"}
+      bg={"#a8a3a3"}
      >
       <Text 
         fontSize="3xl" 
@@ -32,14 +49,24 @@ export default function AllItems () {
       >
         Add New Item
       </Text>
-      <Flex>
-        {/* The form to add an item */}
-        <AddItemForm />
 
         {/* The list of items */}
-        <Flex>
-          <ItemEditCard />
-        </Flex>
+        <Flex
+          flexDirection="row"
+          flexWrap="wrap"
+        >
+        <AddItemForm />
+          {items.map((item) => (
+            <ItemCard 
+              key={item.id}
+              name={item.item_name}
+              price={item.price}
+              description={item.description}
+              image={item.image}
+              amount={item.amount}
+              id={item.id}
+            />
+          ))}
       </Flex>
     </Flex>
   );

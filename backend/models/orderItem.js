@@ -15,17 +15,26 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'Orders',
+          model: 'Order',
           key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       item_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'Items',
+          model: 'Item',
           key: 'id',
         },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+      item_quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
       },
       note: {
         type: DataTypes.STRING,

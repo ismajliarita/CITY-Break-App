@@ -75,6 +75,7 @@ export default function AddItemForm() {
     <Flex 
         flexDirection="column"
         align-items="center"
+        minW="275px"
         width="275px"
         height="510px"
         justifyContent="center" 
