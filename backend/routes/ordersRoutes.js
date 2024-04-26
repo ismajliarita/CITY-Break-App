@@ -7,9 +7,16 @@ const multer = require('multer');
 
 const OrdersController = require('../controllers/ordersController');
 
+
+
+ordersRouter.get(
+  '/get-orders',
+  OrdersController.getOrders,
+);
+
 ordersRouter.post(
-  '/add-item/:id',
-  OrdersController.addItem,
+  '/create-order',
+  OrdersController.createOrder,
 );
 
 

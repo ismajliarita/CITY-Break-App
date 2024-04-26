@@ -3,31 +3,74 @@ const { DataTypes } = require('sequelize');
 
 const Order = db.Order;
 const Item = db.Item;
+const OrderItem = db.OrderItem;
 
 const OrdersRepo = {
-  async addItem(itemId) {
-    const item = await Item.findOne({
-      where: {
-        id: itemId,
-      }
-    });
-// MAKE A COLUMN FOR ORDER WHERE ITS CALLED: BEING CREATED OR PENDING OR STH TO SIGNIFY AN ORDER BEING MADE RN.
-    if (!item) return; 
 
-    const order = await Order.findOne({
-      where:{
-        isFinished: false,
-      }
-    });
-    if (!order) {
-      await Order.create({
-        // order_date: 
-      });
-    }
+  //-----------THIS GOT FIXED WITH LOCAL STORAGE----- 
+  // async addItem(itemId) {
+  //   const item = await Item.findOne({
+  //     where: {
+  //       id: itemId,
+  //     }
+  //   });
+    
+  //   if (!item) return; 
 
-
-  },
+  //   const order = await Order.findOne({
+  //     where:{
+  //       isFinished: false,
+  //     }
+  //   });
+  //   if (!order) {
+  //     await Order.create({
+  //       // order_date: 
+  //     });
+  //   }
+  // },
   
+  async getOrders() {
+    try{
+      return await Order.findAll();
+    } catch(error){
+      throw error;
+    }
+  },
+
+  async createOrder(orderData, totalCost) {
+    try {
+      const order = await Order.create({
+        order_date: new Date( Date.now() ),
+        isFinished: true,
+        total_cost: totalCost,
+      });
+
+      for (let itemId of orderData) {
+        const item = await Item.findOne({
+          where: {
+            id: itemId,
+          }
+        });
+
+        if (!item) {
+          throw new Error(`Item with id ${itemId} not found`);
+        }
+
+        const orderItem = await OrderItem.create({
+          order_id: order.id,
+          item_id: itemId,
+          item_quantity: 1,
+        });
+
+        await orderItem.save();
+      }
+
+      return await order.save();
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
 
 module.exports = OrdersRepo;

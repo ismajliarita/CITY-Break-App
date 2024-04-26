@@ -63,7 +63,7 @@ export default function AddItemForm() {
     
     createItem(e)
       .then((response) => {
-        console.log(response);
+        // console.log(response);
       })
 
     // console.log(formData);

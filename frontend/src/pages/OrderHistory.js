@@ -4,10 +4,19 @@ import {
   Text,
   useMediaQuery,
 } from "@chakra-ui/react";
-import "../style.css";
+import { useState, useEffect } from 'react';
+import Order from '../components/OrderHistory/Order';
+import { getOrders } from '../api';
 
 export default function OrderHistory() {
-  
+  const [allOrders, setAllOrders] = useState([{}]);
+
+  useEffect(() => {
+    getOrders().then((data) => {
+      setAllOrders(data);
+      // console.log(data)
+    });
+  }, []);
   return (
     <>
       <Text 
@@ -26,7 +35,10 @@ export default function OrderHistory() {
         width={"auto"}
         height={"auto"}
       >
-
+        {/* {allOrders.map((order) => {
+          <Order />
+        })} */}
+        {/* <Order /> */}
       </Flex>
     </>
   );

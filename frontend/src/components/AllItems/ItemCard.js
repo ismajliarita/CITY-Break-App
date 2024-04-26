@@ -24,22 +24,22 @@ export default function ItemCard (item) {
 
   async function handleEdit() {
     const items = await getItems();
-    console.log(items);
+    // console.log(items);
   }
 
   function handleAddToOrder() {
-    getItemById(item.id)
-      .then((item) => {
-        // addItemToOrder(item)
-        subtractAmount(item.id)
-        .then((item) => {
-          console.log("subtracted", item.amount);
-          getItemById(item.id).then((item) => {
-            console.log("item", item);
-            localStorage.setItem("currentOrder", JSON.stringify(item));
-          })
-        })
-      })
+    getItemById(item.id).then((item) => {
+      if(item.amount === 0) {
+        return;
+      };
+      if (localStorage.getItem("currentOrder")) {
+        const currentOrder = JSON.parse(localStorage.getItem("currentOrder"));
+        currentOrder.items.push(item);
+        localStorage.setItem("currentOrder", JSON.stringify(currentOrder));
+        return;
+      }
+      localStorage.setItem("currentOrder", JSON.stringify({items: [item]}));
+    })
   }
 
   return(

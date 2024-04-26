@@ -73,14 +73,24 @@ export async function subtractAmount(itemId){
   }).then((response) => response.data);
 }
 
-export async function addItemToOrder(itemId){
-  return sendRequest(`${BACKEND_URL}/order/add-item/${itemId}`, {
-    method: "POST",
+// export async function addItemToOrder(itemId){
+//   return sendRequest(`${BACKEND_URL}/orders/add-item/${itemId}`, {
+//     method: "POST",
+//   }).then((response) => response.data);
+// }
+
+export async function getOrders(){
+  return sendRequest(`${BACKEND_URL}/orders/get-orders`, {
+    method: "GET",
   }).then((response) => response.data);
 }
 
-export async function getOrders(){
-  return sendRequest(`${BACKEND_URL}/order/get-orders`, {
-    method: "GET",
+export async function createOrder(orderItemsIds, totalCost){
+  return sendRequest(`${BACKEND_URL}/orders/create-order`, {
+    method: "POST",
+    body: {
+      orderItemsIds, 
+      totalCost
+    },
   }).then((response) => response.data);
 }
