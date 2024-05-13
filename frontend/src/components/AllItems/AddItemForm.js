@@ -27,8 +27,8 @@ export default function AddItemForm() {
 
     if (files) {
       const file = files[0];
-      const fileType = file.type; // get file type
-      const fileSize = file.size; // get file size
+      const fileType = file.type; 
+      const fileSize = file.size; 
   
       // validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']; 
@@ -59,14 +59,12 @@ export default function AddItemForm() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the browser's default form submission
-    
+    e.preventDefault(); 
+    console.log(e);
     createItem(e)
       .then((response) => {
         // console.log(response);
-      })
-
-    // console.log(formData);
+      });
     fileInputRef.current.value = ''; 
     setFormData({});
   }
@@ -110,29 +108,36 @@ export default function AddItemForm() {
                     name={field.name}
                     onChange={handleChange}
                     accept='image/*' 
-                    ref={fileInputRef}
+                    ref={fileInputRef}  
                     required
                   />
-                  ) : field.name === 'price' ? (
-                    <Input
+                ) : field.name === 'price' ? (
+                  <Input
+                    type={field.type}
+                    name={field.name}
+                    value={formData[field.name] || ''}
+                    onChange={handleChange}
+                    placeholder={"0.00"}
+                    pattern="[0-9]*" 
+                    step="0.01" 
+                    min="0" 
+                    required
+                  />
+                ) : field.name === 'amount' ? (
+                  <Input
                       type={field.type}
                       name={field.name}
                       value={formData[field.name] || ''}
                       onChange={handleChange}
-                      placeholder={"0.00"}
-                      pattern="[0-9]*" 
-                      step="0.01" 
-                      min="0" 
-                      required
                     />
                 ) : (
                   <Input
-                  type={field.type}
-                  name={field.name}
-                  value={formData[field.name] || ''}
-                  onChange={handleChange}
-                  required
-                />
+                    type={field.type}
+                    name={field.name}
+                    value={formData[field.name] || ''}
+                    onChange={handleChange}
+                    required
+                  />
                 )}
               </FormControl>
             ))}

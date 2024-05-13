@@ -18,15 +18,13 @@ const ItemsRepo = {
 
   async createItem(itemData) {
     try {
-      const { name, description, price, image, amount } = itemData;
-
       const item = await Item.create({
-        item_name: name,
-        image,
-        description,
-        price,
-        amount
-      });
+        item_name: itemData.name,
+        image : itemData.image,
+        description : itemData.description,
+        price : itemData.price,
+        amount : itemData.amount === 0 || itemData.amount === "" ? null : itemData.amount,
+    });
       return await item.save();
     } catch (error) {
       throw error;
@@ -62,6 +60,29 @@ const ItemsRepo = {
       }
 
       return await item.save();
+    }catch(error){
+      throw error;
+    }
+  },
+
+  async removeItemAmounts(orderItemsIds){
+    try{
+      for (let itemId of orderItemsIds){
+
+        const item = await Item.findByPk(itemId);
+
+        if (!item) continue;
+        
+        if (item.amount == NULL) {
+          continue;
+        }
+
+        item.set({
+          amount: amount-1
+        });
+
+        await item.save();
+      }
     }catch(error){
       throw error;
     }

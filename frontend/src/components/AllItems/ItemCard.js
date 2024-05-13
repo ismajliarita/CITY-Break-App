@@ -82,11 +82,18 @@ export default function ItemCard (item) {
             fontSize="1rem"
             margin={"10px"}
           >{item.description}</Text>
-          <Text
-            fontSize={"2rem"}
-            fontWeight={"bold"}
-          >{item.amount || "0"}</Text>
-          <Text marginTop={"-10px"} fontSize={"0.7rem"}>left</Text>
+
+          {item.amount !== null  ? (
+            <>
+              <Text
+                fontSize={"2rem"}
+                fontWeight={"bold"}
+              >{item.amount || "0"}</Text>
+              <Text marginTop={"-10px"} fontSize={"0.7rem"}>left</Text>
+            </>
+          ) : (
+            <></>
+          )}
         </Box>
         <Flex 
           flexWrap={"wrap"}

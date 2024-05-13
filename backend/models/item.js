@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       amount:{
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         defaultValue: 0,
       },
       createdAt: {

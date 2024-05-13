@@ -47,6 +47,9 @@ itemsRouter.patch(
   ItemsController.subtractAmount,
 );
 
-
+itemsRouter.patch(
+  '/remove-amounts',
+  ItemsController.removeItemAmounts,
+);
 
 module.exports = itemsRouter;

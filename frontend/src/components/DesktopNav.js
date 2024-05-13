@@ -34,5 +34,11 @@ export default function DesktopNav() {
           <Link to={"/cart"}>Cart</Link>
         </Text>
       </Flex>
+
+      <Flex color="#cccccc" fontSize="1.5rem">
+        <Text marginInline={"20px"}>
+          <Link to="/login">Login - Sign Up</Link>
+        </Text>
+      </Flex>
     </Flex>
 )}

@@ -10,13 +10,13 @@ const OrdersController = require('../controllers/ordersController');
 
 
 ordersRouter.get(
-  '/get-orders',
-  OrdersController.getOrders,
+  '/get-finished-orders/:id',
+  OrdersController.getFinishedOrders,
 );
 
 ordersRouter.post(
   '/create-order',
-  OrdersController.createOrder,
+  OrdersController.createOrderAsAdmin,
 );
 
 

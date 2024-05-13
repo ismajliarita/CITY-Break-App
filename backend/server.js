@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 const app = express();
 const apiRouter = express.Router();
 
@@ -9,7 +10,8 @@ const ordersRoutes = require('./routes/ordersRoutes');
 const usersRoutes = require('./routes/usersRoutes');
 
 app.use(cors());
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 apiRouter.use('/items', itemsRoutes);
 apiRouter.use('/orders', ordersRoutes);

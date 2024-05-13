@@ -11,6 +11,7 @@ const CurrentOrder = React.lazy(() => import('./pages/CurrentOrder'));
 const IncomingOrders = React.lazy(() => import('./pages/IncomingOrders'));
 const AllItems = React.lazy(() => import('./pages/AllItems'));
 const HomePage = React.lazy(() => import('./pages/HomePage'));
+const Profile = React.lazy(() => import('./pages/Profile'));
 
 export default function App() {
 
@@ -26,6 +27,8 @@ export default function App() {
             <Route path="/view-items" element={<AllItems />} />
             <Route path="/incoming-orders" element={<IncomingOrders />} />
             <Route path="/order-history" element={<OrderHistory />} />
+            <Route path="*" element={<div>Not Found</div>} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </React.Suspense>
       </Router>

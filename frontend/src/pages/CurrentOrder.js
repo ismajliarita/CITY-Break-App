@@ -11,7 +11,7 @@ import {
 import { useState, useRef } from 'react';
 import ItemInOrder from '../components/Cart/ItemInOrder';
 import "../../src/style.css";
-import { createOrder } from '../api';
+import { createOrderAsAdmin } from '../api';
 
 export default function CurrentOrder () {
   const [orderItems, setOrderItems] = useState([]);
@@ -19,10 +19,13 @@ export default function CurrentOrder () {
   const [orderTotal, setOrderTotal] = useState(0);
 
   const handleFinishOrder = async () => {
-    createOrder(orderItemsIds, orderTotal)
+    console.log(orderItemsIds);
+    createOrderAsAdmin(orderItemsIds, orderTotal)
     .then(() => {
       localStorage.removeItem("currentOrder");
       setOrderItems([]);
+      setOrderTotal(0);
+      // removeItemAmounts(orderItemsIds);
     })
   };
 

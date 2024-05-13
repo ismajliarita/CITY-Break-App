@@ -6,15 +6,15 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from 'react';
 import Order from '../components/OrderHistory/Order';
-import { getOrders } from '../api';
+import { getFinishedOrders } from '../api';
 
 export default function OrderHistory() {
   const [allOrders, setAllOrders] = useState([{}]);
 
   useEffect(() => {
-    getOrders().then((data) => {
+    getFinishedOrders().then((data) => {
       setAllOrders(data);
-      // console.log(data)
+      console.log(data)
     });
   }, []);
   return (

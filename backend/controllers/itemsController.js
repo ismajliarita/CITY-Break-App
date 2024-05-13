@@ -15,6 +15,7 @@ async function createItem(request, response, next) {
       ...request.body,
       image: request.file.buffer,
     };
+    console.log(itemData);
     const item = await ItemsRepo.createItem(itemData);
     response.status(200).json({ data: item	 });
   }catch(error){
@@ -54,10 +55,22 @@ async function subtractAmount(request, response, next) {
   }
 }
 
+async function removeItemAmounts(request, response, next) {
+  try{
+    const orderItemsIds = request.body.orderItemsIds;
+    const response = await ItemsRepo.removeItemAmounts(orderItemsIds);
+
+    response.status(200).json({ data: response });
+  }catch(error){
+    next(error);
+  }
+}
+
 module.exports = {
   getItems,
   createItem,
   getItemImage,
   getItemById,
   subtractAmount,
+  removeItemAmounts,
 };

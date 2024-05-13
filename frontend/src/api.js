@@ -41,6 +41,8 @@ async function sendRequest(url, { method = "GET", body, headers = {} }) {
   });
 }
 
+
+//----------------- ITEMS -----------------//
 export async function getItems() {
   return sendRequest(`${BACKEND_URL}/items/get-items`, {
     method: "GET",
@@ -49,10 +51,8 @@ export async function getItems() {
 
 // This request will change to not change application JSON for body, but to use formdata
 export async function createItem(e) {
-  // Get the form data
   const formData = new FormData(e.target);
 
-  // Send the form data to the server
   return fetch(`${BACKEND_URL}/items/create-item`, {
     method: 'POST',
     body: formData,
@@ -73,19 +73,23 @@ export async function subtractAmount(itemId){
   }).then((response) => response.data);
 }
 
-// export async function addItemToOrder(itemId){
-//   return sendRequest(`${BACKEND_URL}/orders/add-item/${itemId}`, {
-//     method: "POST",
-//   }).then((response) => response.data);
-// }
+export async function removeItemAmounts(orderItemsIds){
+  return sendRequest(`${BACKEND_URL}/items/remove-amounts`, {
+    method: "PATCH",
+    body: {
+      orderItemsIds
+    },
+  }).then((response) => response.data);
+}
 
-export async function getOrders(){
-  return sendRequest(`${BACKEND_URL}/orders/get-orders`, {
+//----------------- ORDERS -----------------//
+export async function getFinishedOrders(id){
+  return sendRequest(`${BACKEND_URL}/orders/get-finished-orders/${id}`, {
     method: "GET",
   }).then((response) => response.data);
 }
 
-export async function createOrder(orderItemsIds, totalCost){
+export async function createOrderAsAdmin(orderItemsIds, totalCost){
   return sendRequest(`${BACKEND_URL}/orders/create-order`, {
     method: "POST",
     body: {
@@ -94,3 +98,13 @@ export async function createOrder(orderItemsIds, totalCost){
     },
   }).then((response) => response.data);
 }
+
+
+//----------------- USERS -----------------//
+export async function createUser(userData){
+  return sendRequest(`${BACKEND_URL}/users/signup`, {
+    method: "POST",
+    body: userData,
+  }).then((response) => response.data);
+}
+

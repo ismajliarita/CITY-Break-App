@@ -23,3 +23,4 @@ export function prettifyErrorMessage(error) {
     return "An error occurred";
   }
 }
+
