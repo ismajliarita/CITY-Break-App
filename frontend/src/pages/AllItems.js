@@ -8,30 +8,39 @@ import {
   VStack,
   Text
 } from "@chakra-ui/react";
-import { useState, useRef } from 'react';
+import { useContext, useState, useRef } from 'react';
 import { getItemImage, getItems } from '../api';
 // import ItemCard from '../components/ItemCard';
 import AddItemForm from '../components/AllItems/AddItemForm';
 import ItemCard from '../components/AllItems/ItemCard';
+import { AuthContext } from '../context/auth-context';
 
 export default function AllItems () {
-  
+  const auth = useContext(AuthContext);
   const [items, setItems] = useState([]);
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   useEffect(() => {
     getItems()
-      .then((items) => {
-        return Promise.all(
-          items.map(async (item) => {
-            const image = "http://localhost:8081/api/items/" + item.id + "/image"
-            return { ...item, image };
-          })
-        );
-      })
-      .then((itemsWithImages) => {
-        setItems(itemsWithImages);
-      });
-  }, []);
+    .then((items) => {
+      return Promise.all(
+        items.map(async (item) => {
+          const image = "http://localhost:8081/api/items/" + item.id + "/image"
+          return { ...item, image };
+        })
+      );
+    })
+    .then((itemsWithImages) => {
+      setItems(itemsWithImages);
+    });
+    setIsButtonClicked(false);
+    
+    if (!auth.isLoggedIn) {
+      navigate("/auth");
+    }
+
+
+  }, [isButtonClicked]);
 
   return (
     <Flex  
@@ -55,7 +64,9 @@ export default function AllItems () {
           flexDirection="row"
           flexWrap="wrap"
         >
-        <AddItemForm />
+        <AddItemForm 
+          setIsButtonClicked={setIsButtonClicked}
+        />
           {items.map((item) => (
             <ItemCard 
               key={item.id}

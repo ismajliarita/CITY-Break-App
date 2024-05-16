@@ -1,4 +1,3 @@
-import React, {useEffect} from 'react';
 import {
   Flex,
   Input,
@@ -10,14 +9,38 @@ import {
   Text,
   useToast
 } from "@chakra-ui/react";
-import { useState, useRef } from 'react';
-import { createUser } from '../api';
+import React, { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createUser, loginUser } from '../api';
+import { isTokenExpired } from '../util/helpers';
+import { AuthContext } from "../context/auth-context";
 
 export default function Auth () {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  
+  const [loginEmail, setLoginEmail] = useState(""); 
+  const [loginPassword, setLoginPassword] = useState("");  
+  
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isTokenExpired(localStorage.getItem('city-token'))) {
+      localStorage.removeItem("token");
+      auth.setIsLoggedIn(false);
+    }else {
+      auth.setIsLoggedIn(true);
+    }
+
+    if (auth.isLoggedIn) {
+      navigate("/profile");
+      auth.setIsLoggedIn(true);
+    }
+
+  }, []);
   
   const toast = useToast();
 
@@ -43,9 +66,41 @@ export default function Auth () {
     }
   }
 
+  async function handleLoginInputChange(e) {
+    const { name, value } = e.target;
+    
+    switch(name){
+      case "email":
+        setLoginEmail(value);
+        break;
+      case "password":
+        setLoginPassword(value);
+        break;
+      default:
+        break;
+    }
+  }
+
   async function handleLogin(e) {
+    if (localStorage.getItem('city-token')) {
+      localStorage.removeItem('city-token');
+    }
     e.preventDefault();
-    console.log("Login");
+    loginUser({email: loginEmail, password: loginPassword})
+    .then((response) => {
+      
+      localStorage.setItem('city-token', response.token);
+
+      auth.setIsLoggedIn(true);
+      auth.setToken(response.token);
+      localStorage.setItem('city-user', JSON.stringify({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin}));
+
+      auth.setUser({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin});
+      // console.log("AAAAAAAAAAAAAA",{email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin});
+
+      navigate('/profile');
+    })
+    
   }
 
   async function handleRegistering(e) {
@@ -59,12 +114,20 @@ export default function Auth () {
       return;
     }
     e.preventDefault();
-    // setUsername(email.split('@')[0]);
-    console.log(username);
+    
     createUser({email, username, password, isAdmin: false})
     .then((response) => {
-      console.log(response);
-      localStorage.setItem('city-token', response.token);
+      if (isTokenExpired(localStorage.getItem('city-token'))) {
+        localStorage.removeItem("city-token");
+        localStorage.removeItem("city-user");
+        auth.setIsLoggedIn(false);
+      }else {
+        auth.setIsLoggedIn(true);
+        auth.setToken(response.token);
+        localStorage.setItem('city-user', JSON.stringify({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin}));
+        auth.setUser({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin});
+        navigate('/profile');
+      }
     })
 
     
@@ -94,13 +157,15 @@ export default function Auth () {
                 fontSize="0.8rem" 
                 color="grey" 
                 marginBottom="-2px"
-                marginTop={"10px"} >Email or Username</FormLabel>
+                marginTop={"10px"} >Email</FormLabel>
               <Input type="text" 
                 display={"flex"}
                 flexDirection={"column"}
+                name='email'
+                value={loginEmail}
                 id='emailField'
+                onChange={handleLoginInputChange}
               />
-
               <FormLabel 
                 fontSize="0.8rem" 
                 color="grey" 
@@ -109,28 +174,20 @@ export default function Auth () {
               <Input type="password" 
                 display={"flex"}
                 flexDirection={"column"}
+                value={loginPassword}
+                name='password'
                 id='passwordField'
+                onChange={handleLoginInputChange}
               />
-
             </FormControl>
-            <Flex
-              flexDirection={"row"}
-            >
-              <Button 
-                onClick={handleRegistering}
-                bg="#EDF2F7" 
-                _hover={{bg:"#024041", color: "white"}}
-                margin={"10px"}
-                marginBottom={"20px"}
-              >Register</Button>
               <Button 
                 type="submit"
                 bg="#EDF2F7" 
                 _hover={{bg:"#024041", color: "white"}}
                 margin={"10px"}
                 marginBottom={"20px"}
+                onClick={handleLogin}
               >Login</Button>
-            </Flex>
           </VStack>
         </form>
       </Flex>

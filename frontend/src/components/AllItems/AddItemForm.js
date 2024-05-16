@@ -11,7 +11,7 @@ import {
 import { useState, useRef } from 'react';
 import { createItem } from '../../api.js';
 
-export default function AddItemForm() {
+export default function AddItemForm({setIsButtonClicked}) {
   const [formData, setFormData] = useState({});
   const fileInputRef = useRef();
   const formFields = [
@@ -60,10 +60,9 @@ export default function AddItemForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    console.log(e);
     createItem(e)
       .then((response) => {
-        // console.log(response);
+        setIsButtonClicked(true);
       });
     fileInputRef.current.value = ''; 
     setFormData({});

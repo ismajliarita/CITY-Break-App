@@ -21,6 +21,11 @@ usersRouter.post(
 
 usersRouter.post(
   '/login',
+  [
+    body("email").normalizeEmail().isEmail(),
+    body("password").isLength({ min: 8 }),
+  ],
+  inputValidation,
   UserController.loginUser,
 );
 

@@ -15,7 +15,7 @@ async function createItem(request, response, next) {
       ...request.body,
       image: request.file.buffer,
     };
-    console.log(itemData);
+    
     const item = await ItemsRepo.createItem(itemData);
     response.status(200).json({ data: item	 });
   }catch(error){

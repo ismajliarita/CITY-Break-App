@@ -96,6 +96,10 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      confirmation_code: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

@@ -8,21 +8,25 @@ import {
   VStack,
   Text
 } from "@chakra-ui/react";
-import { useState, useRef } from 'react';
+import { useContext, useState, useRef } from 'react';
 import ItemInOrder from '../components/Cart/ItemInOrder';
 import "../../src/style.css";
 import { createOrderAsAdmin } from '../api';
+import { AuthContext } from '../context/auth-context';
 
 export default function CurrentOrder () {
   const [orderItems, setOrderItems] = useState([]);
   const [orderItemsIds, setOrderItemsIds] = useState([]);
   const [orderTotal, setOrderTotal] = useState(0);
 
+  const auth = useContext(AuthContext);
+
   const handleFinishOrder = async () => {
-    console.log(orderItemsIds);
-    createOrderAsAdmin(orderItemsIds, orderTotal)
-    .then(() => {
+    console.log(auth.user.id);
+    createOrderAsAdmin(orderItemsIds, orderTotal, auth.user.id)
+    .then((response) => {
       localStorage.removeItem("currentOrder");
+      console.log(response);
       setOrderItems([]);
       setOrderTotal(0);
       // removeItemAmounts(orderItemsIds);
@@ -37,6 +41,10 @@ export default function CurrentOrder () {
 
     const total = currentOrder.items.reduce((sum, item) => sum + parseFloat(item.price), 0);
     setOrderTotal(total.toFixed(2));
+
+    if (!auth.isLoggedIn) {
+      navigate("/auth");
+    }
   }, []);
   return (
     <Flex

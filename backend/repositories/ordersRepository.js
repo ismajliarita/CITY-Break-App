@@ -38,9 +38,6 @@ const OrdersRepo = {
         return await Order.findAll({
           where: {
             isFinished: true,
-          },
-          include: {
-            model: OrderItem,
           }
         });
       }else {
@@ -48,9 +45,6 @@ const OrdersRepo = {
           where: {
             isFinished: true,
             user_id: id,
-          },
-          include: {
-            model: OrderItem,
           }
         });
       }
@@ -59,13 +53,13 @@ const OrdersRepo = {
     }
   },
 
-  async createOrderAsAdmin(orderData, totalCost) {
+  async createOrderAsAdmin(orderData, totalCost, userId) {
     try {
       const order = await Order.create({
         order_date: new Date(Date.now()),
         isFinished: true,
         total_cost: totalCost,
-        user_id: 1,
+        user_id: userId,
       });
       
       for (let itemId of orderData) {

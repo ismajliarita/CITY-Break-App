@@ -15,13 +15,16 @@ async function createUser(req, res, next) {
   const userData = req.body;
   const user = await UsersRepo.createUser(userData);
   let token;
-  console.log(user.dataValues, "shh", "1h");
+  
   try {
-    token = jwt.sign({ id: user.dataValues.id }, "shh", {
-      expiresIn: "1h",
+    token = jwt.sign({ 
+      id: user.dataValues.id,
+      email: user.dataValues.email,
+      isAdmin: user.dataValues.isAdmin,
+    }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
     });
   } catch (error) {
-    // Return from the function after sending a response
     return res.status(500).json({ error: 'Failed to signup user' });
   }
 
@@ -29,17 +32,24 @@ async function createUser(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
-  try{
-    const userData = req.body;
-    const user = await UsersRepo.loginUser(userData);
+  const userData = req.body;
+  const user = await UsersRepo.loginUser(userData);
+  let token;
 
-    res.status(200).json({ data: user });
-  } catch(error){
-    next(error);
+  try {
+    token = jwt.sign({ 
+      id: user.dataValues.id,
+      email: user.dataValues.email,
+      isAdmin: user.dataValues.isAdmin,
+    }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to login user' });
   }
-}   
 
-
+  res.status(200).json({ data: { user, token } });
+}
 module.exports = {
   getUsers,
   createUser,

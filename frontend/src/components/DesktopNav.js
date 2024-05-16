@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../style.css";
 import { 
   Flex, 
@@ -8,8 +8,28 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import Logo from "../media/city_logo.png";
+import { isTokenExpired } from "../util/helpers";
+import { AuthContext } from "../context/auth-context";
+import { useNavigate } from "react-router-dom";
 
 export default function DesktopNav() {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isTokenExpired()) {
+      localStorage.removeItem("token");
+      auth.setIsLoggedIn(false);
+    }else {
+      auth.setIsLoggedIn(true);
+    }
+
+    if (!auth.isLoggedIn) {
+      navigate("/auth");
+    }
+  }, []);
+
+  
   return (
     <Flex padding="1rem" backgroundColor="#222" width={"100%"} justifyContent="space-between" alignItems="center">
       <Link to="/">
@@ -35,9 +55,10 @@ export default function DesktopNav() {
         </Text>
       </Flex>
 
+
       <Flex color="#cccccc" fontSize="1.5rem">
         <Text marginInline={"20px"}>
-          <Link to="/login">Login - Sign Up</Link>
+          {(!auth.isLoggedIn ? <Link to="/auth">Login</Link> : <Link to="/profile">Profile</Link>)}
         </Text>
       </Flex>
     </Flex>

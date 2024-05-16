@@ -3,20 +3,31 @@ import {
   Flex,
   Text,
   useMediaQuery,
+  Button,
+  Modal,
 } from "@chakra-ui/react";
-import { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import Order from '../components/OrderHistory/Order';
 import { getFinishedOrders } from '../api';
+import { AuthContext } from '../context/auth-context';
 
 export default function OrderHistory() {
-  const [allOrders, setAllOrders] = useState([{}]);
+  const [allOrders, setAllOrders] = useState([]);
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
-    getFinishedOrders().then((data) => {
+    getFinishedOrders(auth.user?.id)
+    .then((data) => {
       setAllOrders(data);
-      console.log(data)
+      // console.log("state ",allOrders);
+      // console.log("data",data);
     });
-  }, []);
+    
+    if (!auth.isLoggedIn) {
+      navigate("/auth");
+    }
+  }, [auth.user]);
+
   return (
     <>
       <Text 
@@ -34,10 +45,16 @@ export default function OrderHistory() {
         bg={"#a8a3a3"}
         width={"auto"}
         height={"auto"}
+        justifyContent="center"
       >
-        {/* {allOrders.map((order) => {
-          <Order />
-        })} */}
+        {allOrders.map((order) => {
+          console.log("order",order)
+          return <Order 
+            // key={order.id}
+            order={order}
+          />
+        }
+        )}
         {/* <Order /> */}
       </Flex>
     </>

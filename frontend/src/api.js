@@ -89,12 +89,13 @@ export async function getFinishedOrders(id){
   }).then((response) => response.data);
 }
 
-export async function createOrderAsAdmin(orderItemsIds, totalCost){
+export async function createOrderAsAdmin(orderItemsIds, totalCost, userId){
   return sendRequest(`${BACKEND_URL}/orders/create-order`, {
     method: "POST",
     body: {
       orderItemsIds, 
-      totalCost
+      totalCost,
+      userId,
     },
   }).then((response) => response.data);
 }
@@ -103,6 +104,13 @@ export async function createOrderAsAdmin(orderItemsIds, totalCost){
 //----------------- USERS -----------------//
 export async function createUser(userData){
   return sendRequest(`${BACKEND_URL}/users/signup`, {
+    method: "POST",
+    body: userData,
+  }).then((response) => response.data);
+}
+
+export async function loginUser(userData){
+  return sendRequest(`${BACKEND_URL}/users/login`, {
     method: "POST",
     body: userData,
   }).then((response) => response.data);
