@@ -17,19 +17,15 @@ export default function DesktopNav() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isTokenExpired()) {
-      localStorage.removeItem("token");
-      auth.setIsLoggedIn(false);
-    }else {
-      auth.setIsLoggedIn(true);
-    }
-
-    if (!auth.isLoggedIn) {
-      navigate("/auth");
-    }
+    // if (isTokenExpired()) {
+    //   localStorage.removeItem("token");
+    //   auth.setIsLoggedIn(false);
+    //   navigate("/auth");
+    // }else {
+    //   auth.setIsLoggedIn(true);
+    // }
   }, []);
 
-  
   return (
     <Flex padding="1rem" backgroundColor="#222" width={"100%"} justifyContent="space-between" alignItems="center">
       <Link to="/">

@@ -22,19 +22,11 @@ export default function Profile () {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isTokenExpired(localStorage.getItem('city-token'))) {
-      auth.setIsLoggedIn(false);
-    }else {
-      auth.setIsLoggedIn(true);
-    }
-
+    console.log("auth", auth);
     if (!auth.isLoggedIn) {
       navigate("/auth");
-    }else {
-
     }
-    // console.log(auth);
-  }, [auth.user]);
+  }, [auth.isLoggedIn]);
 
   return(
     <Flex

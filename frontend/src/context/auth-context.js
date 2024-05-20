@@ -9,13 +9,26 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("city-token");
+    const user = localStorage.getItem("city-user");
+    if (token && user) {
+      setToken(token);
+      setUser(JSON.parse(user));
+    }
+  }, []);
+
+  useEffect(() => {
     if (isTokenExpired(token)) {
       localStorage.removeItem("token");
       setIsLoggedIn(false);
       setToken(null);
       setUser(null);
+    }else {
+      setIsLoggedIn(true);
+      setToken(localStorage.getItem("city-token"));
+      // setUser({});
     }
-    setUserState({user, setUser});
+
   }, [token]);
 
   const authContextValue = {

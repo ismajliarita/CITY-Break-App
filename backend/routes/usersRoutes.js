@@ -29,6 +29,11 @@ usersRouter.post(
   UserController.loginUser,
 );
 
+usersRouter.get(
+  '/get-user/:id',
+  UserController.getUser,
+);
+
 //----------------- VERIFIED ROUTES -----------------//
 usersRouter.use(verifyToken);
 

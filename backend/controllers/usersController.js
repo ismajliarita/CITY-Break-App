@@ -31,6 +31,16 @@ async function createUser(req, res, next) {
   res.status(200).json({ data: { user, token } });
 }
 
+async function getUser(req, res, next) {
+  try{
+    const userId = req.params.id;
+    const user = await UsersRepo.getUser(userId);
+    res.status(200).json({ data: user });
+  }catch(error){
+    next(error);
+  }
+}
+
 async function loginUser(req, res, next) {
   const userData = req.body;
   const user = await UsersRepo.loginUser(userData);
@@ -54,4 +64,5 @@ module.exports = {
   getUsers,
   createUser,
   loginUser,
+  getUser,
 }

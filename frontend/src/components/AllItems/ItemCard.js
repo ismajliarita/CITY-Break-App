@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import {
   Flex,
   Text,
@@ -13,18 +13,81 @@ import {
   useDisclosure,
   Image,
   Box,
+  useToast,
+  FormControl,
+  Input,
+  FormLabel,
 } from "@chakra-ui/react";
-import EditItemModal from './EditItemModal';
-import { getItems, getItemById, subtractAmount } from '../../api';
-
+import { getItemById, deleteItem, updateItem } from '../../api';
+import { AuthContext } from '../../context/auth-context';
 
 export default function ItemCard (item) {
+  const auth = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isDeleteOpen, onDeleteOpen, onDeleteClose } = useDisclosure();
+  const fileInputRef = useRef();
+  const priceRef = useRef();
+  const amountRef = useRef();
+  const nameRef = useRef();
+  const descriptionRef = useRef();
+  const toast = useToast();
+  const formFields = [
+    { name: "name", label: "Name", type: "text" },
+    { name: "image", label: "Image", type: "file" },
+    { name: "description", label: "Description", type: "text" },
+    { name: "price", label: "Price", type: "number" },
+    { name: "amount", label: "Amount", type: "number"}
+  ];
 
-  async function handleEdit() {
-    const items = await getItems();
-    // console.log(items);
+  const inputRef = useRef();
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    // console.log("handleSave: ", e.target);
+    
+    const nameValue = nameRef.current.value;
+    let fileValue = fileInputRef.current.files[0];
+    const priceValue = priceRef.current.value;
+    const descriptionValue = descriptionRef.current.value;
+    const amountValue = amountRef.current.value;
+
+    if (!fileValue) {
+      fileValue = item.image;
+    } 
+
+    updateItem(item.id, {
+      name: nameValue, 
+      image: fileValue, 
+      price: priceValue, 
+      description: descriptionValue, 
+      amount: amountValue}
+    )
+    .then(() => {
+      toast({
+        title: "Item Updated",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      })
+    });
+
+    console.log("price: ", priceValue, " amount: ", amountValue, " name: ", nameValue, " description: ", descriptionValue, " file: ", fileValue);
+
+    onClose();
+  }
+
+
+  async function handleDelete() {
+    const cityUser = JSON.parse(localStorage.getItem("city-user"));
+    console.log("item id: ", item.id, " user id: ", cityUser.id);
+    
+    deleteItem(item.id, cityUser.id).then(() => {
+      toast({
+        title: "Item Deleted",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+    });
   }
 
   function handleAddToOrder() {
@@ -99,19 +162,23 @@ export default function ItemCard (item) {
           flexWrap={"wrap"}
           justifyContent={"center"}
         >
-          <Button 
-            onClick={onDeleteOpen} 
-            bg="#7c0504" 
-            _hover={{bg:"#400302", color: "white"}}
-            margin={"10px"}  
-          >Delete</Button>
-          <Button 
-            onClick={onOpen} 
-            margin={"10px"}
-            bg="#047b7c" 
-            _hover={{bg:"#023f40", color: "white"}} 
-            ml={5}
-          >Edit</Button>
+          {auth.user.isAdmin && (
+            <>
+              <Button 
+                onClick={handleDelete} 
+                bg="#7c0504" 
+                _hover={{bg:"#400302", color: "white"}}
+                margin={"10px"}  
+              >Delete</Button>
+              <Button 
+                onClick={onOpen} 
+                margin={"10px"}
+                bg="#047b7c" 
+                _hover={{bg:"#023f40", color: "white"}} 
+                ml={5}
+              >Edit</Button>
+            </>
+          )}
           <Button 
             margin={"10px"}
             marginTop={0}
@@ -126,17 +193,98 @@ export default function ItemCard (item) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Edit Item Form</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            Eu dolor cillum commodo in aliquip cupidatat cillum enim aliquip occaecat minim. Excepteur aliqua ea voluptate aliqua proident culpa magna cillum aliquip ex voluptate exercitation esse fugiat. Amet deserunt cillum aute adipisicing voluptate nulla amet. In labore anim enim irure nulla in ullamco labore mollit. Irure ex ipsum occaecat consectetur reprehenderit. Occaecat nisi sint tempor labore do labore minim. Ut anim exercitation duis et ea consectetur ut in dolor cupidatat excepteur laboris magna laboris.
+              <form onSubmit={handleSave}>
+                {formFields.map((field) => (
+                  <FormControl padding="7px" key={field.name}>
+                    <FormLabel 
+                      fontSize="0.8rem" 
+                      color="grey" 
+                      marginBottom="-2px" 
+                    >
+                      {field.label}
+                    </FormLabel>
+                    
+                    {field.type === "file" ? (
+                      <Input
+                        display={"flex"}
+                        flexDirection={"column"}
+                        paddingTop="10px"
+                        border={"0px solid grey"}
+
+                        type={field.type}
+                        name={field.name}
+                        // defaultValue={item.image}
+                        // onChange={handleEditChanging}
+                        accept='image/*' 
+                        ref={fileInputRef}  
+                        required
+                      />
+                    ) : field.name === 'price' ? (
+                      <Input
+                        type={field.type}
+                        name={field.name}
+                        
+                        defaultValue={item.price}
+                        ref={priceRef}
+                        // onChange={handleEditChanging}
+                        placeholder={"0.00"}
+                        pattern="[0-9]*" 
+                        step="0.01" 
+                        min="0" 
+                      />
+                    ) : field.name === 'amount' ? (
+                      <Input
+                          ref={amountRef}
+                          type={field.type}
+                          name={field.name}
+                          defaultValue={item.amount}
+                          // value={formData[field.name] || ''}
+                          // onChange={handleEditChanging}
+                        />
+                    ) : field.name === 'name' ?(
+                      <Input
+                        type={field.type}
+                        name={field.name}
+                        defaultValue={item.name}
+                        ref={nameRef}
+                        // value={formData[field.name] || ''}
+                        // onChange={handleEditChanging}
+                        // required
+                      />
+                    ): field.name === 'description' ? (
+                      <Input
+                        type={field.type}
+                        name={field.name}
+                        defaultValue={item.description}
+                        ref={descriptionRef}
+                        // value={formData[field.name] || ''}
+                        // onChange={handleEditChanging}
+                        // required
+                      />
+                    ) : (
+                      <Input
+                        type={field.type}
+                        name={field.name}
+                        // value={formData[field.name] || ''}
+                        // onChange={handleEditChanging}
+                        // required
+                      />
+                    )}
+                  </FormControl>
+                ))}
+              </form>
           </ModalBody>
 
           <ModalFooter>
             <Button bg="#7c0504" _hover={{bg:"#400302", color: "white"}} mr={3} onClick={onClose}>
               Cancel
             </Button>
-            <Button bg="#047b7c" _hover={{bg:"#023f40", color: "white"}} onClick={handleEdit}>Save</Button>
+            <Button bg="#047b7c" 
+              type='submit'
+            _hover={{bg:"#023f40", color: "white"}} onClick={handleSave}>Save</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

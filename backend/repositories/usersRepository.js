@@ -1,4 +1,3 @@
-const { createUser, loginUser } = require("../controllers/usersController");
 const db = require("../models");
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
@@ -19,6 +18,14 @@ const UsersRepo = {
         password: hashedPassword,
         isAdmin,
       });
+    }catch(error){
+      throw error;
+    }
+  },
+
+  async getUser(userId){
+    try{
+      return await User.findByPk(userId);
     }catch(error){
       throw error;
     }

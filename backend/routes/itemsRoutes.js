@@ -26,6 +26,17 @@ itemsRouter.get(
   ItemsController.getItems
 );  
 
+itemsRouter.delete(
+  "/delete-item", 
+  ItemsController.deleteItem
+);
+
+itemsRouter.patch(
+  "/update-item/:id",
+  upload.single("image"),
+  ItemsController.updateItem
+);
+
 itemsRouter.post(
   "/create-item",
   upload.single("image"),

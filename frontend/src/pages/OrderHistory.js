@@ -7,24 +7,24 @@ import {
   Modal,
 } from "@chakra-ui/react";
 import { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Order from '../components/OrderHistory/Order';
 import { getFinishedOrders } from '../api';
 import { AuthContext } from '../context/auth-context';
 
 export default function OrderHistory() {
   const [allOrders, setAllOrders] = useState([]);
+  const navigate = useNavigate();
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    getFinishedOrders(auth.user?.id)
-    .then((data) => {
-      setAllOrders(data);
-      // console.log("state ",allOrders);
-      // console.log("data",data);
-    });
-    
-    if (!auth.isLoggedIn) {
-      navigate("/auth");
+    auth.isLoggedIn || navigate('/auth');
+
+    if(auth.user){
+      getFinishedOrders(auth.user?.id)
+      .then((data) => {
+        setAllOrders(data);
+      });
     }
   }, [auth.user]);
 
@@ -45,7 +45,8 @@ export default function OrderHistory() {
         bg={"#a8a3a3"}
         width={"auto"}
         height={"auto"}
-        justifyContent="center"
+        alignItems="center"
+        flexDirection={"column"}
       >
         {allOrders.map((order) => {
           console.log("order",order)

@@ -11,15 +11,16 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState, useRef } from 'react';
 import {  } from '../api';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../context/auth-context";
 
 export default function Admin () {
+  const navigate = useNavigate();
   const auth = useContext(AuthContext);
+  
   useEffect(() => {
-    
-    if (!auth.isLoggedIn) {
-      navigate("/auth");
-    }
+    auth.isLoggedIn || navigate('/auth');
+    auth.user.isAdmin || navigate('/');
   }, []);
   return(
     <Flex>

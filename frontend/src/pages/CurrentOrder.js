@@ -13,10 +13,12 @@ import ItemInOrder from '../components/Cart/ItemInOrder';
 import "../../src/style.css";
 import { createOrderAsAdmin } from '../api';
 import { AuthContext } from '../context/auth-context';
+import { useNavigate } from 'react-router-dom';
 
 export default function CurrentOrder () {
   const [orderItems, setOrderItems] = useState([]);
   const [orderItemsIds, setOrderItemsIds] = useState([]);
+  const navigate = useNavigate();
   const [orderTotal, setOrderTotal] = useState(0);
 
   const auth = useContext(AuthContext);
@@ -34,6 +36,7 @@ export default function CurrentOrder () {
   };
 
   useEffect(() => {
+    auth.isLoggedIn || navigate('/auth');
     const currentOrder = JSON.parse(localStorage.getItem("currentOrder"));
     if(!currentOrder) return;
     setOrderItems(currentOrder.items);

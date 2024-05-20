@@ -19,13 +19,6 @@ export function isTokenExpired(token) {
     }
 }
 
-export function setUserState({user, setUser}){
-  if (user) {
-    setUser(user);
-  } else {
-    setUser(null);
-  }
-}
 
 // const token = localStorage.getItem('token');
 // if (isTokenExpired(token)) {

@@ -61,6 +61,23 @@ export async function createItem(e) {
   .then(response => response.data)
 }
 
+export async function updateItem(itemId, itemData) {
+  return sendRequest(`${BACKEND_URL}/items/update-item/${itemId}`, {
+    method: "PATCH",
+    body: itemData,
+  }).then((response) => response.data);
+}
+
+export async function deleteItem(itemId, userId) {
+  return sendRequest(`${BACKEND_URL}/items/delete-item`, {
+    method: "DELETE",
+    body: {
+      itemId,
+      userId,
+    },
+  }).then((response) => response.data);
+}
+
 export async function getItemById(itemId) {
   return sendRequest(`${BACKEND_URL}/items/get-item/${itemId}`, {
     method: "GET",
@@ -108,6 +125,13 @@ export async function createUser(userData){
     body: userData,
   }).then((response) => response.data);
 }
+
+export async function getUser(id){
+  return sendRequest(`${BACKEND_URL}/users/get-user/${id}`, {
+    method: "GET",
+  }).then((response) => response.data);
+}
+
 
 export async function loginUser(userData){
   return sendRequest(`${BACKEND_URL}/users/login`, {

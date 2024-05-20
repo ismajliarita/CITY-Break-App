@@ -9,9 +9,7 @@ export default function HomePage() {
   const auth = useContext(AuthContext);
 
   useEffect(() => {
-    if (!auth.isLoggedIn) {
-      navigate("/auth");
-    }
+    
   }, []);
 
   return (

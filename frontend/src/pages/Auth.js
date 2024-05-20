@@ -28,6 +28,7 @@ export default function Auth () {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Auth.js", auth);
     if (isTokenExpired(localStorage.getItem('city-token'))) {
       localStorage.removeItem("token");
       auth.setIsLoggedIn(false);
@@ -38,6 +39,7 @@ export default function Auth () {
     if (auth.isLoggedIn) {
       navigate("/profile");
       auth.setIsLoggedIn(true);
+      // auth.setUser({id:})
     }
 
   }, []);
@@ -82,22 +84,20 @@ export default function Auth () {
   }
 
   async function handleLogin(e) {
-    if (localStorage.getItem('city-token')) {
-      localStorage.removeItem('city-token');
-    }
     e.preventDefault();
     loginUser({email: loginEmail, password: loginPassword})
     .then((response) => {
       
       localStorage.setItem('city-token', response.token);
+      localStorage.setItem('city-user', JSON.stringify(response.user));
 
       auth.setIsLoggedIn(true);
+
       auth.setToken(response.token);
-      localStorage.setItem('city-user', JSON.stringify({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin}));
+      auth.setUser(response.user);
+      console.log("response when u login or register", response);
 
-      auth.setUser({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin});
-      // console.log("AAAAAAAAAAAAAA",{email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin});
-
+      
       navigate('/profile');
     })
     
@@ -117,17 +117,12 @@ export default function Auth () {
     
     createUser({email, username, password, isAdmin: false})
     .then((response) => {
-      if (isTokenExpired(localStorage.getItem('city-token'))) {
-        localStorage.removeItem("city-token");
-        localStorage.removeItem("city-user");
-        auth.setIsLoggedIn(false);
-      }else {
+        console.log(response);
         auth.setIsLoggedIn(true);
         auth.setToken(response.token);
-        localStorage.setItem('city-user', JSON.stringify({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin}));
-        auth.setUser({id: response.user.id, email: response.user.email, username: response.user.username, isAdmin: response.user.isAdmin});
+        localStorage.setItem('city-user', JSON.stringify(response.user));
+        auth.setUser(response.user);
         navigate('/profile');
-      }
     })
 
     

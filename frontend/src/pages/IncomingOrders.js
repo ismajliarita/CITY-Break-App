@@ -1,22 +1,27 @@
 import {React, useEffect, useContext, useState} from 'react';
 import {
   Flex,
-  Text
+  Text,
+  Button
 } from "@chakra-ui/react";
 import { AuthContext } from '../context/auth-context';
+import { useNavigate } from 'react-router-dom';
 
 export default function IncomingOrders() {
-
+  const navigate = useNavigate();
   const auth = useContext(AuthContext);
   useEffect(() => {
-    if (!auth.isLoggedIn) {
-      navigate("/auth");
+
+    auth.isLoggedIn || navigate('/auth');
+    if(auth.isLoggedIn){
+      auth.user.isAdmin || navigate('/');
     }
   }, []);
   return (
     <Flex
       bg={"#a8a3a3"}
-      justifyContent={"center"}
+      alignItems={"center"}
+      flexDirection={"column"}
      >
       <Text 
         fontSize="3xl" 
@@ -26,6 +31,7 @@ export default function IncomingOrders() {
       >
         Incoming Orders
       </Text>
+      
     </Flex>
   );
 }

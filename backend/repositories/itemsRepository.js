@@ -31,6 +31,38 @@ const ItemsRepo = {
     }
   },
 
+  async deleteItem(itemId) {
+    try {
+      const item = await Item.findByPk(itemId);
+      if (!item) return;
+      return await item.destroy();
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  async updateItem(itemId, itemData) {
+    try {
+      console.log("itemData: ", itemData);
+      const item = await Item.findByPk(itemId);
+      if (!item) return;
+      item.set({
+        item_name: itemData.name,
+        description : itemData.description,
+        price : itemData.price,
+        amount : itemData.amount === 0 || itemData.amount === "" ? null : itemData.amount,
+      });
+      if (itemData.image) {
+        item.set({
+          image: itemData.image,
+        });
+      }
+      return await item.save();
+    } catch (error) {
+      throw error;
+    }
+  },
+
   async getItemImage(itemId){
     return await Item.findByPk(itemId, {
       attributes: ['image'],

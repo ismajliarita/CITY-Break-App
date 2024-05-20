@@ -1,4 +1,7 @@
+const UsersRepo = require("../repositories/usersRepository");
 const ItemsRepo = require("../repositories/itemsRepository");
+const HttpError = require("../util/httpError");
+
 
 async function getItems(req, res, next) {
   try{
@@ -18,6 +21,40 @@ async function createItem(request, response, next) {
     
     const item = await ItemsRepo.createItem(itemData);
     response.status(200).json({ data: item	 });
+  }catch(error){
+    next(error);
+  }
+}
+
+async function deleteItem(request, response, next) {
+  try{
+    const itemId = request.body.itemId;
+    const adminId = request.body.userId;
+    const admin = await UsersRepo.getUser(adminId);
+    
+    if (!admin || admin.isAdmin == false)
+      return next(new HttpError("Not Authorised!", 403));
+    console.log(admin); 
+    const item = await ItemsRepo.deleteItem(itemId);
+
+    response.status(200).json({ data: item });
+  }catch(error){
+    next(error);
+  }
+}
+
+async function updateItem(request, response, next) {
+  try{
+    const itemId = request.params.id;
+    
+    const data = {
+      ...request.body,
+      image: request.file ? request.file.buffer : undefined,
+    };
+
+    const item = await ItemsRepo.updateItem(itemId, data);
+
+    response.status(200).json({ data: item });
   }catch(error){
     next(error);
   }
@@ -73,4 +110,6 @@ module.exports = {
   getItemById,
   subtractAmount,
   removeItemAmounts,
+  deleteItem,
+  updateItem,
 };

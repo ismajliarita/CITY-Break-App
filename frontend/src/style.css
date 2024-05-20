@@ -18,3 +18,29 @@ body{
 #root{
   height: 100vh;
 }
+
+.next-prev-button{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  color: black;
+  background-color: #49626363;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.next-prev-button:disabled{
+  background-color: #d1d1d131;
+  cursor: auto;
+}
+
+.next-prev-button:hover:not(:disabled){
+  background-color: #1b1b1bb9;
+  color: white;
+}
