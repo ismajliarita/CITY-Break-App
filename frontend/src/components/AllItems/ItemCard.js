@@ -23,17 +23,23 @@ import { AuthContext } from '../../context/auth-context';
 
 export default function ItemCard (item) {
   const auth = useContext(AuthContext);
+  const { isOpen: isNoteOpen, onOpen: onNoteOpen, onClose: onNoteClose } = useDisclosure();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  let userId = auth.user.id;
   const fileInputRef = useRef();
   const priceRef = useRef();
   const amountRef = useRef();
   const nameRef = useRef();
   const descriptionRef = useRef();
   const toast = useToast();
+
+  const [noteValue, setnoteValue] = useState("");
+
   const formFields = [
     { name: "name", label: "Name", type: "text" },
     { name: "image", label: "Image", type: "file" },
     { name: "description", label: "Description", type: "text" },
+    { name: "type", label: "Type", type: "select", options: ["food", "drink", ""]},
     { name: "price", label: "Price", type: "number" },
     { name: "amount", label: "Amount", type: "number"}
   ];
@@ -54,7 +60,7 @@ export default function ItemCard (item) {
       fileValue = item.image;
     } 
 
-    updateItem(item.id, {
+    updateItem(auth.token, item.id, {
       name: nameValue, 
       image: fileValue, 
       price: priceValue, 
@@ -70,17 +76,16 @@ export default function ItemCard (item) {
       })
     });
 
-    console.log("price: ", priceValue, " amount: ", amountValue, " name: ", nameValue, " description: ", descriptionValue, " file: ", fileValue);
+    // console.log("price: ", priceValue, " amount: ", amountValue, " name: ", nameValue, " description: ", descriptionValue, " file: ", fileValue);
 
     onClose();
   }
-
 
   async function handleDelete() {
     const cityUser = JSON.parse(localStorage.getItem("city-user"));
     console.log("item id: ", item.id, " user id: ", cityUser.id);
     
-    deleteItem(item.id, cityUser.id).then(() => {
+    deleteItem(auth.token, item.id).then(() => {
       toast({
         title: "Item Deleted",
         status: "success",
@@ -90,19 +95,39 @@ export default function ItemCard (item) {
     });
   }
 
-  function handleAddToOrder() {
-    getItemById(item.id).then((item) => {
-      if(item.amount === 0) {
-        return;
-      };
-      if (localStorage.getItem("currentOrder")) {
-        const currentOrder = JSON.parse(localStorage.getItem("currentOrder"));
-        currentOrder.items.push(item);
-        localStorage.setItem("currentOrder", JSON.stringify(currentOrder));
+  function sendToCart(){
+    getItemById(auth.token, item.id).then((item) => {
+      if(item.amount === 0 || item.amount === null || item.amount === undefined) {
         return;
       }
-      localStorage.setItem("currentOrder", JSON.stringify({items: [item]}));
-    })
+
+      item.note = noteValue || "";
+  
+      if (localStorage.getItem("currentOrder")) {
+        const currentOrder = JSON.parse(localStorage.getItem("currentOrder"));
+      
+        if (currentOrder.userId !== userId) {
+          currentOrder.items.push(item);
+          localStorage.setItem("currentOrder", JSON.stringify(currentOrder));
+        } else {
+          currentOrder.items.push(item);
+          localStorage.setItem("currentOrder", JSON.stringify(currentOrder));
+        }
+      } else {
+        localStorage.setItem("currentOrder", JSON.stringify({userId, items: [item]}));
+      }
+      onNoteClose();
+    }).catch((error) => {
+      console.error('An error occurred:', error);
+    });
+  }
+  function handleAddToOrder() {
+    if(!auth.user.isAdmin ) {
+      onNoteOpen();
+    }else{
+      sendToCart();
+    }
+    
   }
 
   return(
@@ -110,7 +135,7 @@ export default function ItemCard (item) {
       <Flex 
         flexDirection="column"
         width="275px"
-        height="510px"
+        height="560px"
         alignItems={"center"} 
         border="2px solid grey"
         borderRadius="10px"
@@ -123,11 +148,15 @@ export default function ItemCard (item) {
           display="flex"
           flexDirection="column"
           alignItems="center"
+          justifyContent={"center"}
         >
           <Text
-            fontSize="2rem"
+            alignContent={"center"}
+            fontSize="1.8rem"
             fontWeight="bold"
+            height={"80px"}
             marginBottom={"10px"}
+            marginInline={"10px"}
           >{item.name || "name"}</Text>
           <Image
             src={item.image} 
@@ -139,24 +168,35 @@ export default function ItemCard (item) {
           <Text
             fontSize="1.5rem"
             fontWeight="bold"
-            marginTop={"20px"}
+            marginTop={"10px"}
           >{item.price + "€" || "0€"}</Text>
           <Text
             fontSize="1rem"
             margin={"10px"}
+            // height={"80px"}
           >{item.description}</Text>
 
+          <Text
+            fontSize="1rem"
+            fontWeight="bold"
+          >
+            {item.type}
+          </Text>
           {item.amount !== null  ? (
-            <>
+            <Flex
+              flexDirection={"column"}
+              alignItems={"center"}
+            >
               <Text
                 fontSize={"2rem"}
                 fontWeight={"bold"}
               >{item.amount || "0"}</Text>
               <Text marginTop={"-10px"} fontSize={"0.7rem"}>left</Text>
-            </>
+            </Flex>
           ) : (
             <></>
           )}
+          
         </Box>
         <Flex 
           flexWrap={"wrap"}
@@ -285,6 +325,24 @@ export default function ItemCard (item) {
             <Button bg="#047b7c" 
               type='submit'
             _hover={{bg:"#023f40", color: "white"}} onClick={handleSave}>Save</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isNoteOpen} onClose={onNoteClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Send the Item with a Note</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Input value={noteValue} onChange={(e) => setnoteValue(e.target.value)} placeholder="Enter a note for this item" />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="red" mr={3} onClick={onNoteClose}>
+              Close
+            </Button>
+            <Button colorScheme='teal' onClick={sendToCart}>Send to Cart</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

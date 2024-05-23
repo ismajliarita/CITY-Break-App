@@ -18,12 +18,22 @@ export default function Order ({order}) {
   
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isDeleteOpen, onDeleteOpen, onDeleteClose } = useDisclosure();
-  
+  const [isFinished, setIsFinished] = useState("UNFINISHED");
+
+  useEffect(() => {
+    if(isFinished === true){
+      setIsFinished("FINISHED");
+    }else{
+      setIsFinished("UNFINISHED");
+    }
+  }, [])
+
   let dateTime = order.order_date;
   let [date, time] = dateTime.split("T");
   time = time.split(".")[0]; 
   async function expandOrder() {
-    console.log("expand order")
+    console.log(order)
+    // console.log("expand order")
   }
   return(
     <Flex
@@ -44,15 +54,10 @@ export default function Order ({order}) {
         alignItems={"center"}
       >
       <Text
-        marginLeft={"20px"}
+        marginInline={"15px"}
         fontSize={"xl"}
         fontWeight={"bold"}
-      >{order?.id}</Text>
-      <Text
-        marginInline={"5px"}
-        fontSize={"xl"}
-        fontWeight={"bold"}
-      >{order.isFinished && "Finished"}</Text>
+      >{isFinished}</Text>
         <Flex>
           <Text
             fontSize={"sm"}
@@ -79,7 +84,7 @@ export default function Order ({order}) {
         >{order.total_cost}€</Text>
         <Button 
           marginInline={"5px"}
-          onClick={onOpen} 
+          onClick={expandOrder} 
           bg="#EDF2F7" 
           _hover={{bg:"#024041", color: "white"}}
         >OPEN</Button>

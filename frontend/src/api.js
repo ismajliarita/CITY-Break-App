@@ -1,3 +1,5 @@
+import Auth from "./pages/Auth";
+
 const BACKEND_URL =
   process.env.REACT_APP_BACKEND_URL || "http://localhost:8081/api";
 
@@ -49,50 +51,66 @@ export async function getItems() {
   }).then((response) => response.data);
 }
 
-// This request will change to not change application JSON for body, but to use formdata
-export async function createItem(e) {
+export async function createItem(token, e) {
   const formData = new FormData(e.target);
 
   return fetch(`${BACKEND_URL}/items/create-item`, {
     method: 'POST',
+    headers: {
+      Authorization: "JWT " + token,
+    },
     body: formData,
   })
   .then(response => response.json())
   .then(response => response.data)
 }
 
-export async function updateItem(itemId, itemData) {
+export async function updateItem(token, itemId, itemData) {
   return sendRequest(`${BACKEND_URL}/items/update-item/${itemId}`, {
     method: "PATCH",
+    headers: {
+      Authorization: "JWT " + token,
+    },
     body: itemData,
   }).then((response) => response.data);
 }
 
-export async function deleteItem(itemId, userId) {
+export async function deleteItem(token, itemId) {
   return sendRequest(`${BACKEND_URL}/items/delete-item`, {
     method: "DELETE",
+    headers: {
+      Authorization: "JWT " + token,
+    },
     body: {
       itemId,
-      userId,
     },
   }).then((response) => response.data);
 }
 
-export async function getItemById(itemId) {
+export async function getItemById(token, itemId) {
   return sendRequest(`${BACKEND_URL}/items/get-item/${itemId}`, {
     method: "GET",
+    headers: {
+      Authorization: "JWT " + token,
+    },
   }).then((response) => response.data);
 }
 
-export async function subtractAmount(itemId){
+export async function subtractAmount(token, itemId){
   return sendRequest(`${BACKEND_URL}/items/subtract-amount/${itemId}`, {
     method: "PATCH",
+    headers: {
+      Authorization: "JWT " + token,
+    },
   }).then((response) => response.data);
 }
 
-export async function removeItemAmounts(orderItemsIds){
+export async function removeItemAmounts(token, orderItemsIds){
   return sendRequest(`${BACKEND_URL}/items/remove-amounts`, {
     method: "PATCH",
+    headers: {
+      Authorization: "JWT " + token,
+    },
     body: {
       orderItemsIds
     },
@@ -100,19 +118,46 @@ export async function removeItemAmounts(orderItemsIds){
 }
 
 //----------------- ORDERS -----------------//
-export async function getFinishedOrders(id){
+export async function getFinishedOrders(token, id){
   return sendRequest(`${BACKEND_URL}/orders/get-finished-orders/${id}`, {
+    headers: {
+      Authorization: "JWT " + token,
+    },
     method: "GET",
   }).then((response) => response.data);
 }
 
-export async function createOrderAsAdmin(orderItemsIds, totalCost, userId){
+export async function createOrderAsAdmin(token, orderItems, totalCost){
+  return sendRequest(`${BACKEND_URL}/orders/create-order-as-admin`, {
+    method: "POST",
+    headers: {
+      Authorization: "JWT " + token
+    },
+    body: {
+      orderItems,
+      totalCost,
+    },
+  }).then((response) => response.data);
+}
+
+export async function createOrder(token, orderItems, totalCost){
   return sendRequest(`${BACKEND_URL}/orders/create-order`, {
     method: "POST",
+    headers: {
+      Authorization: "JWT " + token
+    },
     body: {
-      orderItemsIds, 
+      orderItems,
       totalCost,
-      userId,
+    },
+  }).then((response) => response.data);
+}
+
+export async function getOrders(token, id){
+  return sendRequest(`${BACKEND_URL}/orders/get-orders/${id}`, {
+    method: "GET",
+    headers: {
+      Authorization: "JWT " + token,
     },
   }).then((response) => response.data);
 }
@@ -126,12 +171,14 @@ export async function createUser(userData){
   }).then((response) => response.data);
 }
 
-export async function getUser(id){
+export async function getUser(token, id){
   return sendRequest(`${BACKEND_URL}/users/get-user/${id}`, {
     method: "GET",
+    headers: {
+      Authorization: "JWT " + token,
+    },
   }).then((response) => response.data);
 }
-
 
 export async function loginUser(userData){
   return sendRequest(`${BACKEND_URL}/users/login`, {
@@ -140,3 +187,20 @@ export async function loginUser(userData){
   }).then((response) => response.data);
 }
 
+export async function getAllUsers(token){
+  return sendRequest(`${BACKEND_URL}/users/get-all-users`, {
+    method: "GET",
+    headers: {
+      Authorization: "JWT " + token,
+    },
+  }).then((response) => response.data);
+}
+
+export async function deleteUser(token, userId){
+  return sendRequest(`${BACKEND_URL}/users/delete-user/${userId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: "JWT " + token,
+    },
+  }).then((response) => response.data);
+}

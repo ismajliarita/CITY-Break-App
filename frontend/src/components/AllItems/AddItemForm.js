@@ -4,6 +4,7 @@ import {
   Input,
   Button,
   FormControl,
+  Select, 
   FormLabel,
   VStack,
   Text
@@ -19,7 +20,8 @@ export default function AddItemForm() {
     { name: "image", label: "Image", type: "file" },
     { name: "description", label: "Description", type: "text" },
     { name: "price", label: "Price", type: "number" },
-    { name: "amount", label: "Amount", type: "number"}
+    { name: "amount", label: "Amount", type: "number"},
+    { name: "type", label: "Type", type: "select", options: ["food", "drink", ""]},
   ];
 
   const handleChange = (e) => {
@@ -60,8 +62,9 @@ export default function AddItemForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    createItem(e)
+    createItem(token, e)
       .then((response) => {
+        alert('Item added successfully!');
       });
     fileInputRef.current.value = ''; 
     setFormData({});
@@ -73,7 +76,7 @@ export default function AddItemForm() {
         align-items="center"
         minW="275px"
         width="275px"
-        height="510px"
+        height="560px"
         justifyContent="center" 
         alignItems={"center"}
         alignContent={"center"}   
@@ -81,10 +84,11 @@ export default function AddItemForm() {
         borderRadius="10px"
         boxShadow={"3px 3px 20px 1px rgba(0,0,0,3)"}
         padding="10px" 
+        paddingBottom={"20px"}
         margin="30px"
       >
         <form onSubmit={handleSubmit}>
-          <VStack spacing={4}> 
+          <VStack spacing={2}> 
             {formFields.map((field) => (
               <FormControl padding="7px" key={field.name}>
                 <FormLabel 
@@ -128,6 +132,18 @@ export default function AddItemForm() {
                       value={formData[field.name] || ''}
                       onChange={handleChange}
                     />
+                ) : field.name === 'type' ? (
+                  <Select
+                    name={field.name}
+                    value={formData[field.name] || ''}
+                    onChange={handleChange}
+                    required
+                    // placeholder=" "
+                  > 
+                    <option value="food">Food</option>
+                    <option value="drink">Drink</option>
+                    <option value="">Other</option>
+                  </Select>
                 ) : (
                   <Input
                     type={field.type}
@@ -139,7 +155,7 @@ export default function AddItemForm() {
                 )}
               </FormControl>
             ))}
-            <Button type="submit" bg="#047b7c" _hover={{bg:"#023f40", color: "white"}}>Submit</Button>
+            <Button type="submit" marginTop={"10px"} bg="#047b7c" _hover={{bg:"#023f40", color: "white"}}>Submit</Button>
           </VStack>
         </form>
       </Flex>

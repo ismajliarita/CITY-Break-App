@@ -1,17 +1,14 @@
-import React, {useEffect} from 'react';
+import React, {useContext} from 'react';
 import {
   Flex,
-  Input,
   Button,
-  FormControl,
-  FormLabel,
-  
-  VStack,
   Text
 } from "@chakra-ui/react";
-import { useState, useRef } from 'react';
+import { AuthContext } from '../../context/auth-context';
 
-export default function ItemInOrder ({item, setOrderItems, setOrderTotal}) {
+export default function ItemInOrder ({item, setAllItems, setOrderTotal}) {
+  const auth = useContext(AuthContext);
+  const userId = auth.user.id;
 
   async function removeItem() {
     let currentOrder = JSON.parse(localStorage.getItem("currentOrder"));
@@ -21,13 +18,13 @@ export default function ItemInOrder ({item, setOrderItems, setOrderTotal}) {
         found = true;
         return false;
       }
-        return true;
+      return true;
     });
     currentOrder.items = newItems;
     localStorage.setItem("currentOrder", JSON.stringify(currentOrder));
-    setOrderItems(newItems);
-
     
+    setAllItems(newItems); 
+
     const total = currentOrder.items.reduce((sum, item) => sum + parseFloat(item.price), 0);
     setOrderTotal(total.toFixed(2));
   }

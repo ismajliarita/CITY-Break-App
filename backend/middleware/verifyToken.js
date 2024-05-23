@@ -13,7 +13,7 @@ const verifyToken = async (request, response, next) => {
       if (error) {
         next(new HttpError("You are not authorised.", 401));
       } else {
-        request.jwtUserId = decode.userId;
+        request.jwtUserId = decode.id;
         next();
       }
     }

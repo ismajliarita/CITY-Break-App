@@ -6,41 +6,67 @@ import {
   FormControl,
   FormLabel,
   VStack,
-  Text
+  Text,
+  Toast
 } from "@chakra-ui/react";
 import { useContext, useState, useRef } from 'react';
 import ItemInOrder from '../components/Cart/ItemInOrder';
 import "../../src/style.css";
-import { createOrderAsAdmin } from '../api';
+import { createOrderAsAdmin, createOrder } from '../api';
 import { AuthContext } from '../context/auth-context';
 import { useNavigate } from 'react-router-dom';
 
 export default function CurrentOrder () {
+  const [allItems, setAllItems] = useState([]);
+  const [orderItemIds, setOrderItemIds] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
-  const [orderItemsIds, setOrderItemsIds] = useState([]);
-  const navigate = useNavigate();
   const [orderTotal, setOrderTotal] = useState(0);
+
+  const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
 
   const handleFinishOrder = async () => {
-    console.log(auth.user.id);
-    createOrderAsAdmin(orderItemsIds, orderTotal, auth.user.id)
-    .then((response) => {
-      localStorage.removeItem("currentOrder");
-      console.log(response);
-      setOrderItems([]);
-      setOrderTotal(0);
-      // removeItemAmounts(orderItemsIds);
-    })
+    if(auth.user.isAdmin){
+      createOrderAsAdmin(auth.token, orderItemIds, orderTotal)
+      .then(() => {
+        localStorage.removeItem("currentOrder");
+        setAllItems([]);
+        setOrderTotal(0);
+        // removeItemAmounts(allItemsIds);
+      })
+    }else{
+      console.log(orderItems);
+      createOrder(auth.token, orderItems, orderTotal).then(() => {
+        localStorage.removeItem("currentOrder");
+        setAllItems([]);
+        setOrderItems([]);
+        setOrderTotal(0);
+        Toast({
+          title: "Order placed",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        // removeItemAmounts(allItemsIds);
+      });
+    }
   };
 
   useEffect(() => {
     auth.isLoggedIn || navigate('/auth');
     const currentOrder = JSON.parse(localStorage.getItem("currentOrder"));
     if(!currentOrder) return;
+    let user = JSON.parse(localStorage.getItem("city-user"));
+    if(user && currentOrder.userId != user.id){
+      localStorage.removeItem("currentOrder");
+      setAllItems([]);
+      setOrderTotal(0);
+    };
+    setAllItems(currentOrder.items);
+    setOrderItemIds(currentOrder.items.map((item) => item.id));
+    
     setOrderItems(currentOrder.items);
-    setOrderItemsIds(currentOrder.items.map((item) => item.id));
 
     const total = currentOrder.items.reduce((sum, item) => sum + parseFloat(item.price), 0);
     setOrderTotal(total.toFixed(2));
@@ -48,7 +74,7 @@ export default function CurrentOrder () {
     if (!auth.isLoggedIn) {
       navigate("/auth");
     }
-  }, []);
+  }, [auth.userId]);
   return (
     <Flex
       // height={"90vh"}
@@ -76,12 +102,12 @@ export default function CurrentOrder () {
         flexDirection={"column"}
         marginBottom={"100px"}
       >
-        {orderItems.map((item) => {
+        {allItems.map((item) => {
           return (
           <ItemInOrder 
-            key={orderItems.indexOf(item)}
+            key={allItems.indexOf(item)}
             item={item}
-            setOrderItems={setOrderItems}
+            setAllItems={setAllItems}
             setOrderTotal={setOrderTotal}
           />
           );

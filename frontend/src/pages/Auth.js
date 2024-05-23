@@ -28,7 +28,7 @@ export default function Auth () {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("Auth.js", auth);
+    // console.log("Auth.js", auth);
     if (isTokenExpired(localStorage.getItem('city-token'))) {
       localStorage.removeItem("token");
       auth.setIsLoggedIn(false);
@@ -87,6 +87,7 @@ export default function Auth () {
     e.preventDefault();
     loginUser({email: loginEmail, password: loginPassword})
     .then((response) => {
+      // console.log("loginEmail: ", loginEmail, " loginPassword: ", loginPassword);
       
       localStorage.setItem('city-token', response.token);
       localStorage.setItem('city-user', JSON.stringify(response.user));
@@ -95,7 +96,7 @@ export default function Auth () {
 
       auth.setToken(response.token);
       auth.setUser(response.user);
-      console.log("response when u login or register", response);
+      // console.log("response when u login or register", response);
 
       
       navigate('/profile');
@@ -117,15 +118,13 @@ export default function Auth () {
     
     createUser({email, username, password, isAdmin: false})
     .then((response) => {
-        console.log(response);
         auth.setIsLoggedIn(true);
         auth.setToken(response.token);
         localStorage.setItem('city-user', JSON.stringify(response.user));
         auth.setUser(response.user);
-        navigate('/profile');
-    })
-
-    
+      })
+      
+      navigate('/profile');
   }
 
   return(

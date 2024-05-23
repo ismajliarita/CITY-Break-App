@@ -10,7 +10,7 @@ import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 
 export default function NavBar() {
-  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
+  const [isLargerThan768] = useMediaQuery("(min-width: 920px)");
 
   return(
     <Flex backgroundColor="#222" alignItems="center">

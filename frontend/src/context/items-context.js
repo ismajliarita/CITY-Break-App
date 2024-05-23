@@ -8,7 +8,7 @@ export const ItemsProvider = ({ children }) => {
 
   useEffect(() => {
     const allItems = getItems();
-    // const user = localStorage.getItem("city-user");
+    
     if (allItems) {
       setItems(allItems);
     }

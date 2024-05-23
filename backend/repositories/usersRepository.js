@@ -54,6 +54,24 @@ const UsersRepo = {
     }
   },
 
+  async getAllUsers() {
+    try{
+      return await User.findAll();
+    }catch(error){
+      throw error;
+    }
+  },
+
+  async deleteUser(userId) {
+    try{
+      return await User.destroy({
+        where: { id: userId }
+      });
+    }catch(error){
+      throw error;
+    }
+  },
+
 }
 
 module.exports = UsersRepo;

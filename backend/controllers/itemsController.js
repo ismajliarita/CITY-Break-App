@@ -1,5 +1,6 @@
 const UsersRepo = require("../repositories/usersRepository");
 const ItemsRepo = require("../repositories/itemsRepository");
+const jwt = require('jsonwebtoken');
 const HttpError = require("../util/httpError");
 
 
@@ -28,13 +29,14 @@ async function createItem(request, response, next) {
 
 async function deleteItem(request, response, next) {
   try{
+    const token = request.headers.authorization.split(" ")[1];
     const itemId = request.body.itemId;
-    const adminId = request.body.userId;
-    const admin = await UsersRepo.getUser(adminId);
+    const adminId = request.jwtUserId;
+    
+    const admin = await UsersRepo.getUser(token, adminId);
     
     if (!admin || admin.isAdmin == false)
       return next(new HttpError("Not Authorised!", 403));
-    console.log(admin); 
     const item = await ItemsRepo.deleteItem(itemId);
 
     response.status(200).json({ data: item });
@@ -46,6 +48,12 @@ async function deleteItem(request, response, next) {
 async function updateItem(request, response, next) {
   try{
     const itemId = request.params.id;
+    const userId = request.jwtUserId;
+
+    const admin = await UsersRepo.getUser(userId);
+
+    if (!admin || admin.isAdmin == false)
+      return next(new HttpError("Not Authorised!", 403));
     
     const data = {
       ...request.body,

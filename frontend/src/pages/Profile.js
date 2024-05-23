@@ -22,7 +22,7 @@ export default function Profile () {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("auth", auth);
+    // console.log("auth", auth);
     if (!auth.isLoggedIn) {
       navigate("/auth");
     }
@@ -54,7 +54,7 @@ export default function Profile () {
       <Text 
         display={"flex"}
         justifyContent={"center"}
-        fontSize="1rem" >{auth.user.email}
+        fontSize="1rem" >{auth.user?.email}
       </Text>
       <Button
         onClick={() => {

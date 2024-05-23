@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const itemsRouter = express.Router();
 const multer = require('multer');
+const verifyToken = require("../middleware/verifyToken");
 
 const ItemsController = require('../controllers/itemsController');
 
@@ -26,10 +27,13 @@ itemsRouter.get(
   ItemsController.getItems
 );  
 
-itemsRouter.delete(
-  "/delete-item", 
-  ItemsController.deleteItem
+itemsRouter.get(
+  '/:id/image',
+  ItemsController.getItemImage,
 );
+
+itemsRouter.use(verifyToken);
+
 
 itemsRouter.patch(
   "/update-item/:id",
@@ -41,11 +45,6 @@ itemsRouter.post(
   "/create-item",
   upload.single("image"),
   ItemsController.createItem
-);
-
-itemsRouter.get(
-  '/:id/image',
-  ItemsController.getItemImage,
 );
 
 itemsRouter.get(
@@ -61,6 +60,11 @@ itemsRouter.patch(
 itemsRouter.patch(
   '/remove-amounts',
   ItemsController.removeItemAmounts,
+);
+
+itemsRouter.delete(
+  "/delete-item", 
+  ItemsController.deleteItem
 );
 
 module.exports = itemsRouter;

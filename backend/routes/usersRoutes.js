@@ -7,7 +7,6 @@ const inputValidation = require("../middleware/inputValidation");
 const usersRouter = express.Router();
 
 const UserController = require('../controllers/usersController');
-const { verify } = require('crypto');
 
 usersRouter.get(
   '/get-users/:id',
@@ -16,6 +15,11 @@ usersRouter.get(
 
 usersRouter.post(
   '/signup',
+  [
+    body("email").normalizeEmail().isEmail(),
+    body("password").isLength({ min: 8 }),
+  ],
+  inputValidation,
   UserController.createUser,
 );
 
@@ -36,5 +40,16 @@ usersRouter.get(
 
 //----------------- VERIFIED ROUTES -----------------//
 usersRouter.use(verifyToken);
+
+usersRouter.get(
+  '/get-all-users',
+  UserController.getAllUsers,
+);
+
+usersRouter.delete(
+  '/delete-user/:id',
+  UserController.deleteUser,
+);
+
 
 module.exports = usersRouter;

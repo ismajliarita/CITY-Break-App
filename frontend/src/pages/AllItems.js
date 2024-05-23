@@ -7,6 +7,7 @@ import {
   FormLabel,
   VStack,
   Text,
+  Select, 
   Box,
 } from "@chakra-ui/react";
 import "../../src/style.css";
@@ -50,7 +51,7 @@ export default function AllItems () {
       justifyContent={"center"}
       bg={"#a8a3a3"}
      >
-      <Text
+      {/* <Text
         display={"flex"}
         justifyContent={"center"}
         fontSize="3xl"
@@ -59,7 +60,7 @@ export default function AllItems () {
         margin="20px"
       >
         All Items
-      </Text>
+      </Text> */}
       <Flex
         justifyContent={"center"}
         marginTop={"20px"}
@@ -76,7 +77,7 @@ export default function AllItems () {
             color="grey" 
             marginBottom="-2px" 
           >
-            Search Items by Name, Description, or Price
+            Search Items by Name, Description, Type or Price
           </FormLabel>
           <Input 
             value={searchTerm}
@@ -89,6 +90,7 @@ export default function AllItems () {
       <Flex
         flexDirection="row"
         flexWrap="wrap"
+        justifyContent={"center"}
       >
         {auth.user.isAdmin && (
           <AddItemForm />
@@ -96,6 +98,7 @@ export default function AllItems () {
         {items.filter(item => 
           item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.price.toString().includes(searchTerm)
         )
         .sort((a, b) => (b.amount === 0 ? -1 : 0) - (a.amount === 0 ? -1 : 0))
@@ -107,6 +110,7 @@ export default function AllItems () {
             name={item.item_name}
             price={item.price}
             description={item.description}
+            type={item.type}
             image={item.image}
             amount={item.amount}
             id={item.id}
@@ -123,14 +127,6 @@ export default function AllItems () {
         <button
           onClick={() => setCurrentPage(currentPage - 1)}
           className='next-prev-button'
-          // style={{
-          //   border:'1px solid black',
-          //   padding: '10px',
-          //   width: '150px',
-          //   backgroundColor: 'grey',
-          //   paddingInline: '10px',
-          //   borderRadius: '5px'
-          // }}
           disabled={currentPage === 1}
           margin={"5px"}
         >

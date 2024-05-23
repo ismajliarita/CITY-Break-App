@@ -9,7 +9,7 @@ const ItemsRepo = {
   async getItems() {
     try{
       return await Item.findAll({
-        attributes: ['id', 'item_name', 'price', 'description', 'amount'],
+        attributes: ['id', 'item_name', 'price', 'type', 'description', 'amount'],
       });
     } catch(error){
       throw error;
@@ -22,6 +22,7 @@ const ItemsRepo = {
         item_name: itemData.name,
         image : itemData.image,
         description : itemData.description,
+        type: itemData.type,
         price : itemData.price,
         amount : itemData.amount === 0 || itemData.amount === "" ? null : itemData.amount,
     });
@@ -43,7 +44,6 @@ const ItemsRepo = {
 
   async updateItem(itemId, itemData) {
     try {
-      console.log("itemData: ", itemData);
       const item = await Item.findByPk(itemId);
       if (!item) return;
       item.set({

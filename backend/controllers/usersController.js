@@ -60,9 +60,43 @@ async function loginUser(req, res, next) {
 
   res.status(200).json({ data: { user, token } });
 }
+
+async function getAllUsers(req, res, next) {
+  try{
+    const userId = req.jwtUserId;
+    const admin = await UsersRepo.getUser(userId);
+    
+    if(!admin.dataValues.isAdmin){
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const users = await UsersRepo.getAllUsers();
+    res.status(200).json({ data: users });
+  }catch(error){
+    next(error);
+  }
+}
+
+async function deleteUser(req, res, next) {
+  try{
+    const adminId = req.jwtUserId;
+    const userId = req.params.id;
+    const admin = await UsersRepo.getUser(adminId);
+    if(!admin.isAdmin){
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    await UsersRepo.deleteUser(userId);
+    res.status(200).json({ data: 'User deleted' });
+  }
+  catch(error){
+    next(error);
+  }
+}
+
 module.exports = {
   getUsers,
   createUser,
   loginUser,
   getUser,
+  getAllUsers,
+  deleteUser,
 }
