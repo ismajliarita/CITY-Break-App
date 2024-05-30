@@ -11,6 +11,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Select,
   Image,
   Box,
   useToast,
@@ -26,48 +27,55 @@ export default function ItemCard (item) {
   const { isOpen: isNoteOpen, onOpen: onNoteOpen, onClose: onNoteClose } = useDisclosure();
   const { isOpen, onOpen, onClose } = useDisclosure();
   let userId = auth.user.id;
+
   const fileInputRef = useRef();
   const priceRef = useRef();
   const amountRef = useRef();
   const nameRef = useRef();
   const descriptionRef = useRef();
+  const typeRef = useRef();
+
   const toast = useToast();
 
   const [noteValue, setnoteValue] = useState("");
+
 
   const formFields = [
     { name: "name", label: "Name", type: "text" },
     { name: "image", label: "Image", type: "file" },
     { name: "description", label: "Description", type: "text" },
-    { name: "type", label: "Type", type: "select", options: ["food", "drink", ""]},
     { name: "price", label: "Price", type: "number" },
-    { name: "amount", label: "Amount", type: "number"}
+    { name: "amount", label: "Amount", type: "number"},
+    { name: "type", label: "Type", type: "select", options: ["food", "drink", "snack", ""]},
   ];
 
   const inputRef = useRef();
 
   const handleSave = async (e) => {
     e.preventDefault();
-    // console.log("handleSave: ", e.target);
     
     const nameValue = nameRef.current.value;
     let fileValue = fileInputRef.current.files[0];
     const priceValue = priceRef.current.value;
     const descriptionValue = descriptionRef.current.value;
     const amountValue = amountRef.current.value;
+    const typeValue = typeRef.current.value;
 
     if (!fileValue) {
       fileValue = item.image;
     } 
 
-    updateItem(auth.token, item.id, {
-      name: nameValue, 
-      image: fileValue, 
-      price: priceValue, 
-      description: descriptionValue, 
-      amount: amountValue}
-    )
-    .then(() => {
+    updateItem(auth.token, item.id, e
+    //   {
+    //   name: nameValue, 
+    //   image: fileValue, 
+    //   price: priceValue, 
+    //   description: descriptionValue, 
+    //   amount: amountValue,
+    //   type: typeValue
+    // }
+  )
+    .then((data) => {
       toast({
         title: "Item Updated",
         status: "success",
@@ -75,15 +83,11 @@ export default function ItemCard (item) {
         isClosable: true,
       })
     });
-
-    // console.log("price: ", priceValue, " amount: ", amountValue, " name: ", nameValue, " description: ", descriptionValue, " file: ", fileValue);
-
     onClose();
   }
 
   async function handleDelete() {
     const cityUser = JSON.parse(localStorage.getItem("city-user"));
-    console.log("item id: ", item.id, " user id: ", cityUser.id);
     
     deleteItem(auth.token, item.id).then(() => {
       toast({
@@ -97,10 +101,6 @@ export default function ItemCard (item) {
 
   function sendToCart(){
     getItemById(auth.token, item.id).then((item) => {
-      if(item.amount === 0 || item.amount === null || item.amount === undefined) {
-        return;
-      }
-
       item.note = noteValue || "";
   
       if (localStorage.getItem("currentOrder")) {
@@ -256,8 +256,6 @@ export default function ItemCard (item) {
 
                         type={field.type}
                         name={field.name}
-                        // defaultValue={item.image}
-                        // onChange={handleEditChanging}
                         accept='image/*' 
                         ref={fileInputRef}  
                         required
@@ -269,7 +267,6 @@ export default function ItemCard (item) {
                         
                         defaultValue={item.price}
                         ref={priceRef}
-                        // onChange={handleEditChanging}
                         placeholder={"0.00"}
                         pattern="[0-9]*" 
                         step="0.01" 
@@ -281,8 +278,6 @@ export default function ItemCard (item) {
                           type={field.type}
                           name={field.name}
                           defaultValue={item.amount}
-                          // value={formData[field.name] || ''}
-                          // onChange={handleEditChanging}
                         />
                     ) : field.name === 'name' ?(
                       <Input
@@ -290,19 +285,24 @@ export default function ItemCard (item) {
                         name={field.name}
                         defaultValue={item.name}
                         ref={nameRef}
-                        // value={formData[field.name] || ''}
-                        // onChange={handleEditChanging}
-                        // required
                       />
+                    ): field.name === 'type' ?(
+                      <Select 
+                        name={field.name} 
+                        defaultValue={item.type} 
+                        ref={typeRef}
+                      >
+                        <option value="food">Food</option>
+                        <option value="drink">Drink</option>
+                        <option value="snack">Snack</option>
+                        <option value="other">Other</option>
+                      </Select>
                     ): field.name === 'description' ? (
                       <Input
                         type={field.type}
                         name={field.name}
                         defaultValue={item.description}
                         ref={descriptionRef}
-                        // value={formData[field.name] || ''}
-                        // onChange={handleEditChanging}
-                        // required
                       />
                     ) : (
                       <Input

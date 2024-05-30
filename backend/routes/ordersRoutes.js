@@ -30,5 +30,15 @@ ordersRouter.get(
   OrdersController.getOrders,
 );
 
+ordersRouter.get(
+  '/get-incoming-orders',
+  OrdersController.getIncomingOrders,
+);
+
+ordersRouter.get(
+  '/get-order-items/:id',
+  OrdersController.getOrderItems,
+);
+
 
 module.exports = ordersRouter;

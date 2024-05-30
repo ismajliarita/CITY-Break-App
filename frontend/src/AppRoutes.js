@@ -13,6 +13,7 @@ const OrderHistory = React.lazy(() => import('./pages/OrderHistory'));
 const CurrentOrder = React.lazy(() => import('./pages/CurrentOrder'));
 const IncomingOrders = React.lazy(() => import('./pages/IncomingOrders'));
 const Profile = React.lazy(() => import('./pages/Profile'));
+const VerifyEmail = React.lazy(() => import('./pages/VerifyEmail'));
 import ProtectedRoute from './components/ProtectedRoute';
 
 
@@ -37,14 +38,18 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<HomePage />} />
 
-        <Route path="/auth" element={<Auth />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
-        <Route path="/view-items" element={<AllItems />} />
+        <Route path="/auth" element={<Auth />} />
 
         <Route path="*" element={<div>Not Found</div>} />
 
         <Route element={<ProtectedRoute isAllowed={adminLevel} />}>
           <Route path="/admin" element={<Admin />} />
+        </Route>
+        
+        <Route element={<ProtectedRoute isAllowed={userId} />}>
+          <Route path="/view-items" element={<AllItems />} />
         </Route>
         
         <Route element={<ProtectedRoute isAllowed={userId} />}>

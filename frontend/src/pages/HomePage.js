@@ -6,16 +6,12 @@ import {
 import { AuthContext } from '../context/auth-context';
 import { ItemsContext } from '../context/items-context';
 import { getItems } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
   const auth = useContext(AuthContext);
   const itemContext = useContext(ItemsContext);
   const [top3Items, setTop3Items] = useState([]);
-
-  useEffect(() => {
-    
-  }, []);
-
 
 
   return (

@@ -16,6 +16,7 @@ import AddItemForm from '../components/AllItems/AddItemForm';
 import { useNavigate } from 'react-router-dom';
 import ItemCard from '../components/AllItems/ItemCard';
 import { AuthContext } from '../context/auth-context';
+import { isTokenExpired } from '../util/helpers';
 
 export default function AllItems () {
   const auth = useContext(AuthContext);
@@ -27,6 +28,10 @@ export default function AllItems () {
 
 
   useEffect(() => {
+    if(isTokenExpired(auth.token)){
+      auth.setLoggedIn(false);  
+      navigate('/auth');
+    }
     auth.isLoggedIn || navigate('/auth');
     getItems()
     .then((items) => {
@@ -40,7 +45,7 @@ export default function AllItems () {
     .then((itemsWithImages) => {
       setItems(itemsWithImages);
     });
-    if(auth.user.isAdmin && currentPage === 1){
+    if(auth.user?.isAdmin && currentPage === 1){
       setItemsPerPage(4);
     }
   }, []);

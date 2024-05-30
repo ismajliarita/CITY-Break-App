@@ -14,6 +14,11 @@ usersRouter.get(
 );
 
 usersRouter.post(
+  "/verify-email",
+  UserController.verifyEmail
+);
+
+usersRouter.post(
   '/signup',
   [
     body("email").normalizeEmail().isEmail(),
@@ -51,5 +56,14 @@ usersRouter.delete(
   UserController.deleteUser,
 );
 
+usersRouter.patch(
+  '/change-username/:id',
+  UserController.changeUsername,
+);
+
+usersRouter.patch(
+  '/change-password/:id',
+  UserController.changePassword,
+);
 
 module.exports = usersRouter;

@@ -35,7 +35,7 @@ itemsRouter.get(
 itemsRouter.use(verifyToken);
 
 
-itemsRouter.patch(
+itemsRouter.post(
   "/update-item/:id",
   upload.single("image"),
   ItemsController.updateItem

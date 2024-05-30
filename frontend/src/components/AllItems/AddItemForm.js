@@ -7,12 +7,15 @@ import {
   Select, 
   FormLabel,
   VStack,
-  Text
+  Text,
+  Toast
 } from "@chakra-ui/react";
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { createItem } from '../../api.js';
+import { AuthContext } from '../../context/auth-context';
 
 export default function AddItemForm() {
+  const auth = useContext(AuthContext);
   const [formData, setFormData] = useState({});
   const fileInputRef = useRef();
   const formFields = [
@@ -21,7 +24,7 @@ export default function AddItemForm() {
     { name: "description", label: "Description", type: "text" },
     { name: "price", label: "Price", type: "number" },
     { name: "amount", label: "Amount", type: "number"},
-    { name: "type", label: "Type", type: "select", options: ["food", "drink", ""]},
+    { name: "type", label: "Type", type: "select", options: ["food", "drink","snack", ""]},
   ];
 
   const handleChange = (e) => {
@@ -62,9 +65,14 @@ export default function AddItemForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    createItem(token, e)
+    createItem(auth.token, e)
       .then((response) => {
-        alert('Item added successfully!');
+        Toast({
+          title: "Item created successfully",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
       });
     fileInputRef.current.value = ''; 
     setFormData({});
@@ -142,6 +150,7 @@ export default function AddItemForm() {
                   > 
                     <option value="food">Food</option>
                     <option value="drink">Drink</option>
+                    <option value="snack">Snack</option>
                     <option value="">Other</option>
                   </Select>
                 ) : (

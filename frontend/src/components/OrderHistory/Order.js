@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect, useState } from 'react';
 import {
   Flex,
   Button,
@@ -12,16 +12,16 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useState, useRef } from 'react';
+import { AuthContext } from '../../context/auth-context';
 
 export default function Order ({order}) {
-  
+  const auth = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isDeleteOpen, onDeleteOpen, onDeleteClose } = useDisclosure();
-  const [isFinished, setIsFinished] = useState("UNFINISHED");
+  const [isFinished, setIsFinished] = useState();
 
   useEffect(() => {
-    if(isFinished === true){
+    if(order.isFinished){
       setIsFinished("FINISHED");
     }else{
       setIsFinished("UNFINISHED");
@@ -32,7 +32,6 @@ export default function Order ({order}) {
   let [date, time] = dateTime.split("T");
   time = time.split(".")[0]; 
   async function expandOrder() {
-    console.log(order)
     // console.log("expand order")
   }
   return(

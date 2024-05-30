@@ -15,23 +15,7 @@ const ItemsRepo = {
       throw error;
     }
   },
-
-  async createItem(itemData) {
-    try {
-      const item = await Item.create({
-        item_name: itemData.name,
-        image : itemData.image,
-        description : itemData.description,
-        type: itemData.type,
-        price : itemData.price,
-        amount : itemData.amount === 0 || itemData.amount === "" ? null : itemData.amount,
-    });
-      return await item.save();
-    } catch (error) {
-      throw error;
-    }
-  },
-
+  
   async deleteItem(itemId) {
     try {
       const item = await Item.findByPk(itemId);
@@ -41,20 +25,38 @@ const ItemsRepo = {
       throw error;
     }
   },
-
+  
+    async createItem(itemData) {
+      try {
+        const item = await Item.create({
+          item_name: itemData.name,
+          image : itemData.image,
+          description : itemData.description,
+          type: itemData.type,
+          price : itemData.price,
+          amount : itemData.amount === 0 || itemData.amount === "" ? null : itemData.amount,
+      });
+        return await item.save();
+      } catch (error) {
+        throw error;
+      }
+    },
+  
   async updateItem(itemId, itemData) {
     try {
+      console.log("ITEM DATA IN REPOSITORY: ",itemData);
       const item = await Item.findByPk(itemId);
       if (!item) return;
       item.set({
-        item_name: itemData.name,
-        description : itemData.description,
-        price : itemData.price,
-        amount : itemData.amount === 0 || itemData.amount === "" ? null : itemData.amount,
+        item_name: itemData.itemData.name,
+        description : itemData.itemData.description,
+        type: itemData.itemData.type,
+        price : itemData.itemData.price,
+        amount : itemData.itemData.amount === 0 || itemData.itemData.amount === "" ? null : itemData.itemData.amount,
       });
-      if (itemData.image) {
+      if (itemData.itemData.image) {
         item.set({
-          image: itemData.image,
+          image: itemData.itemData.image,
         });
       }
       return await item.save();

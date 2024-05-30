@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
       },
+      isTaken: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       confirmation_code: {
         type: DataTypes.INTEGER,
         allowNull: true,

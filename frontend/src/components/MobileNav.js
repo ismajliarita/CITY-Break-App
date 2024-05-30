@@ -1,4 +1,4 @@
-import {React, useContext} from "react";
+import {React, useContext, useEffect} from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faClock,
@@ -20,9 +20,17 @@ import {
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/auth-context";
 import Logo from "../media/city_logo.png";
+import { useNavigate } from "react-router-dom";
 
 export default function MobileNav() {
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // if(!auth.isLoggedIn){
+    //   navigate('/auth');
+    // }  
+  }, []);
   return (
     <Flex padding="1rem" backgroundColor="#222" width={"100%"} justifyContent="space-between" alignItems="center">
       <Link to="/">
@@ -32,31 +40,31 @@ export default function MobileNav() {
         auth.isLoggedIn ? 
         <Flex width={"70%"}  color="#cccccc" fontSize="1.5rem" justifyContent={"space-between"}>
           <Link to="/view-items">
-            <FontAwesomeIcon fontSize={"2rem"} icon={faMugHot} />
+            <FontAwesomeIcon fontSize={"1.7rem"} icon={faMugHot} />
           </Link>
           <Link to="/order-history">
-            <FontAwesomeIcon fontSize={"2rem"} icon={faClock} />
+            <FontAwesomeIcon fontSize={"1.7rem"} icon={faClock} />
           </Link>
-        {(auth.user.isAdmin ? 
+        {(auth.user?.isAdmin ? 
           <Link to="/incoming-orders">
-            <FontAwesomeIcon fontSize={"2rem"} icon={faPaperPlane} />
+            <FontAwesomeIcon fontSize={"1.7rem"} icon={faPaperPlane} />
           </Link> : <></>)}
-        {(auth.user.isAdmin ? 
+        {(auth.user?.isAdmin ? 
           <Link to="/admin">
-            <FontAwesomeIcon fontSize={"2rem"} icon={faLock} />
+            <FontAwesomeIcon fontSize={"1.7rem"} icon={faLock} />
           </Link> : <></>)}
           
           
 
           <Link to="/cart">
-            <FontAwesomeIcon fontSize={"2rem"} icon={faCartShopping} />
+            <FontAwesomeIcon fontSize={"1.7rem"} icon={faCartShopping} />
           </Link>
           <Link to="/profile">
-            <FontAwesomeIcon fontSize={"2rem"} icon={faUser} />
+            <FontAwesomeIcon fontSize={"1.7rem"} icon={faUser} />
           </Link>
         </Flex> :
         <Link to="/auth">
-          <FontAwesomeIcon color="#cccccc" fontSize={"2rem"} icon={faRightToBracket} />
+          <FontAwesomeIcon color="#cccccc" fontSize={"1.7rem"} icon={faRightToBracket} />
         </Link>
       )}
     </Flex>

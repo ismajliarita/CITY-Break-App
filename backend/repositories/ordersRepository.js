@@ -1,5 +1,5 @@
 const db = require("../models");
-const { DataTypes } = require('sequelize');
+const { DataTypes, or } = require('sequelize');
 
 const Order = db.Order;
 const User = db.User;
@@ -80,10 +80,10 @@ const OrdersRepo = {
     }
   },
 
-  async createOrder(orderItems, totalCost, userId) {
+  async createOrder(orderItems, totalCost, userId, scheduleDate) {
     try {
       const order = await Order.create({
-        order_date: new Date(Date.now()),
+        order_date: scheduleDate,
         total_cost: totalCost,
         isFinished: false,
         confirmation_code: Math.floor(Math.random() * 1000000),
@@ -137,7 +137,50 @@ const OrdersRepo = {
     } catch(error){
       throw error;
     }
-  }
+  },
+
+  async getIncomingOrders(id) {
+    try{
+      const user = await User.findByPk(id);
+
+      if(!user.isAdmin) return;
+      const allOrders = await Order.findAll({
+        where: {
+          isFinished: false,
+        }
+      })
+      
+      return allOrders;
+    }catch(error){
+      throw error;
+    }
+  },
+
+  async getOrderItems(orderId) {
+    try {
+      const orderItems = await OrderItem.findAll({
+        where: {
+          order_id: orderId,
+        },
+        attributes: ['id', 'order_id', 'item_id', 'item_quantity', 'note'], // Add 'id' here
+      });
+
+      const items = await Promise.all(orderItems.map(async (orderItem) => {
+        const item = await Item.findByPk(orderItem.item_id);
+        return {
+          id: orderItem.id,
+          item_quantity: orderItem.item_quantity,
+          note: orderItem.note,
+          item_name: item.item_name,
+          item_description: item.description,
+        };
+      }));
+
+      return items;
+    } catch (error) {
+      throw error;
+    }
+  },
 
 }
 

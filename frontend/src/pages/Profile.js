@@ -8,11 +8,12 @@ import {
   VStack,
   Text,
   Image,
-  useToast
+  useToast,
+  Toast
 } from "@chakra-ui/react";
 import Placeholder from "../media/profile-placeholder.jpg";
 import React, { useContext, useState, useRef, useEffect } from 'react';
-import { createUser } from '../api';
+import { changeUsername, changePassword, deleteUser } from '../api';
 import { AuthContext } from "../context/auth-context";
 import { isTokenExpired } from "../util/helpers";
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +28,55 @@ export default function Profile () {
       navigate("/auth");
     }
   }, [auth.isLoggedIn]);
+
+  const handleChangeUsername = () => {
+    const newUsername = prompt("Enter new username");
+    if (newUsername) {
+      changeUsername(auth.token, auth.user.id, newUsername)
+      .then(() => {
+        localStorage.setItem("city-user", JSON.stringify({ ...auth.user, username: newUsername }));
+        auth.setUser({ ...auth.user, username: newUsername });
+
+        // console.log(username);
+      });
+    }
+  };
+
+  const handleChangePassword = () => {
+    const oldPassword = prompt("Enter old password");
+    const newPassword = prompt("Enter new password");
+    const confirmPassword = prompt("Confirm new password");
+    if (newPassword) {
+      changePassword(auth.token, auth.user.id, {oldPassword, newPassword, confirmPassword}).then(() => {
+        Toast ({
+          title: "Password changed",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
+      
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    const confirm = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
+    if (confirm) {
+      deleteUser(auth.token, auth.user.id).then(() => {
+        auth.setIsLoggedIn(false);
+        localStorage.removeItem("city-token");
+        localStorage.removeItem("city-user");
+        navigate("/auth");
+        Toast({
+          title: "Account deleted",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
+    }
+  };
+
 
   return(
     <Flex
@@ -56,19 +106,47 @@ export default function Profile () {
         justifyContent={"center"}
         fontSize="1rem" >{auth.user?.email}
       </Text>
-      <Button
-        onClick={() => {
-          localStorage.removeItem("city-token");
-          auth.setIsLoggedIn(false);
-          localStorage.removeItem("city-user");
-          navigate("/auth");
-        }}
-        colorScheme="red"
+      <Flex
+        width={"330px"}
         marginTop={"20px"}
+        flexWrap={"wrap"}
+        justifyContent={"center"}
       >
-        Log Out
-      </Button>
-      </VStack>
-    </Flex>
+        <Button
+          onClick={() => {
+            localStorage.removeItem("city-token");
+            auth.setIsLoggedIn(false);
+            localStorage.removeItem("city-user");
+            navigate("/auth");
+          }}
+          colorScheme="red"
+          margin={"5px"}
+        >
+          Log Out
+        </Button>
+        <Button 
+          margin={"5px"} 
+          colorScheme="teal"
+          onClick={handleChangeUsername}
+        >
+          Change Username
+        </Button>
+        <Button 
+          margin={"5px"} 
+          colorScheme="teal"
+          onClick={handleChangePassword}
+        >
+          Change Password
+        </Button>
+        <Button 
+          margin={"5px"} 
+          colorScheme="red"
+          onClick={handleDeleteAccount}
+        >
+          Delete Account
+        </Button>
+      </Flex>
+    </VStack>
+  </Flex>
   )
 }

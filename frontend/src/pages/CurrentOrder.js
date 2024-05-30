@@ -3,10 +3,18 @@ import {
   Flex,
   Input,
   Button,
-  FormControl,
-  FormLabel,
-  VStack,
+  // FormControl,
+  // FormLabel,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  // VStack,
   Text,
+  useDisclosure,
   Toast
 } from "@chakra-ui/react";
 import { useContext, useState, useRef } from 'react';
@@ -22,9 +30,34 @@ export default function CurrentOrder () {
   const [orderItems, setOrderItems] = useState([]);
   const [orderTotal, setOrderTotal] = useState(0);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  const [date, setDate] = useState();
+  const [time, setTime] = useState();
+  
+
   const navigate = useNavigate();
 
   const auth = useContext(AuthContext);
+
+  const schedule = () => {
+    const scheduleDate = date + " " + time;
+    createOrder(auth.token, orderItems, orderTotal, scheduleDate).then(() => {
+      localStorage.removeItem("currentOrder");
+      setOrderItems([]);
+      setOrderTotal(0);
+      setAllItems([]);
+      Toast({
+        title: "Order placed",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+      onClose();
+
+      // removeItemAmounts(allItemsIds);
+    });
+  };
 
   const handleFinishOrder = async () => {
     if(auth.user.isAdmin){
@@ -33,28 +66,21 @@ export default function CurrentOrder () {
         localStorage.removeItem("currentOrder");
         setAllItems([]);
         setOrderTotal(0);
-        // removeItemAmounts(allItemsIds);
       })
     }else{
-      console.log(orderItems);
-      createOrder(auth.token, orderItems, orderTotal).then(() => {
-        localStorage.removeItem("currentOrder");
-        setAllItems([]);
-        setOrderItems([]);
-        setOrderTotal(0);
-        Toast({
-          title: "Order placed",
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-        // removeItemAmounts(allItemsIds);
-      });
+        onOpen();
     }
   };
 
   useEffect(() => {
     auth.isLoggedIn || navigate('/auth');
+
+    const now = new Date();
+    const currentDate = now.toISOString().split('T')[0];
+    const currentTime = now.toTimeString().split(' ')[0].slice(0, 5);
+    setDate(currentDate);
+    setTime(currentTime);
+
     const currentOrder = JSON.parse(localStorage.getItem("currentOrder"));
     if(!currentOrder) return;
     let user = JSON.parse(localStorage.getItem("city-user"));
@@ -75,6 +101,7 @@ export default function CurrentOrder () {
       navigate("/auth");
     }
   }, [auth.userId]);
+
   return (
     <Flex
       // height={"90vh"}
@@ -132,6 +159,7 @@ export default function CurrentOrder () {
           onClick={() => {
             localStorage.removeItem("currentOrder");
             setOrderItems([]);
+            setAllItems([]);
             setOrderTotal(0);
           }}
         >
@@ -157,6 +185,32 @@ export default function CurrentOrder () {
         </Text>
 
       </Flex>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Schedule Order</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text  
+              textAlign={"center"}
+              justifySelf={"center"}
+              margin={"20px"}
+            >If you do not select a Date and Time, it will automatically be selected for after 10 minutes</Text>
+            <Flex>
+              <Input marginRight="10px" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              <Input marginLeft="10px" type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button marginInline={"10px"} variant="ghost" onClick={onClose}>Go back</Button>
+            <Button colorScheme="teal" mr={3} onClick={schedule}>
+              Schedule
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }

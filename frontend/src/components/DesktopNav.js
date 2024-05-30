@@ -9,21 +9,10 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import Logo from "../media/city_logo.png";
-import { isTokenExpired } from "../util/helpers";
 import { AuthContext } from "../context/auth-context";
-import { useNavigate } from "react-router-dom";
 
 export default function DesktopNav() {
   const auth = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if(isTokenExpired(localStorage.getItem("city-token"))){
-      navigate('auth')
-    }else{
-      auth.isLoggedIn || navigate('/auth');
-    }
-  }, []);
 
   return (
     <Flex padding="1rem" backgroundColor="#222" alignItems="center" width={"100%"}>

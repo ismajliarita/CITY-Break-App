@@ -6,6 +6,7 @@ import {
   FormLabel,
   Box,
   VStack,
+  Link,
   Text,
   useToast
 } from "@chakra-ui/react";
@@ -23,6 +24,8 @@ export default function Auth () {
   
   const [loginEmail, setLoginEmail] = useState(""); 
   const [loginPassword, setLoginPassword] = useState("");  
+
+  const [isRegistering, setIsRegistering] = useState(false);
   
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
@@ -32,6 +35,7 @@ export default function Auth () {
     if (isTokenExpired(localStorage.getItem('city-token'))) {
       localStorage.removeItem("token");
       auth.setIsLoggedIn(false);
+      navigate("/auth");
     }else {
       auth.setIsLoggedIn(true);
     }
@@ -40,6 +44,8 @@ export default function Auth () {
       navigate("/profile");
       auth.setIsLoggedIn(true);
       // auth.setUser({id:})
+    }else{
+      navigate("/auth");
     }
 
   }, []);
@@ -49,6 +55,10 @@ export default function Auth () {
   useEffect(() => {
     setUsername(email.split('@')[0]);
   }, [handleInputChange])
+
+  async function handleForgotPassword() {
+    
+  };
     
   async function handleInputChange(e) {
     const { name, value } = e.target;
@@ -116,7 +126,7 @@ export default function Auth () {
     }
     e.preventDefault();
     
-    createUser({email, username, password, isAdmin: false})
+    createUser(email, username, password)
     .then((response) => {
         auth.setIsLoggedIn(true);
         auth.setToken(response.token);
@@ -129,132 +139,162 @@ export default function Auth () {
 
   return(
       
-      <Flex
-        justifyContent={"center"}
-        marginTop={"100px"}
-      >
-      <Flex 
-        bg={"#a8a3a3"}
-        width={"300px"}
-        border={"2px solid white"}
-        margin={"10px"}
-        justifyContent={"center"}
-        padding={"10px"}
-        fontSize={"1.5rem"}
-        borderRadius={"10px"}
-      >
-        <form onSubmit={handleLogin}>
-          <VStack spacing={4}>
-            <Text marginTop={"20px"}>Login</Text>
-            <FormControl>
-              <FormLabel 
-                fontSize="0.8rem" 
-                color="grey" 
-                marginBottom="-2px"
-                marginTop={"10px"} >Email</FormLabel>
-              <Input type="text" 
-                display={"flex"}
-                flexDirection={"column"}
-                name='email'
-                value={loginEmail}
-                id='emailField'
-                onChange={handleLoginInputChange}
-              />
-              <FormLabel 
-                fontSize="0.8rem" 
-                color="grey" 
-                marginBottom="-2px"
-                marginTop={"20px"} >Password</FormLabel>
-              <Input type="password" 
-                display={"flex"}
-                flexDirection={"column"}
-                value={loginPassword}
-                name='password'
-                id='passwordField'
-                onChange={handleLoginInputChange}
-              />
-            </FormControl>
+    <Flex
+      justifyContent={"center"}
+      marginTop={"100px"}
+      
+    >
+      {(!isRegistering ?
+        <Flex 
+          bg={"#a8a3a3"}
+          width={"280px"}
+          border={"2px solid white"}
+          flexDirection={"column"}
+          margin={"10px"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          padding={"10px"}
+          fontSize={"1.5rem"}
+          borderRadius={"10px"}
+        >
+          <form onSubmit={handleLogin}>
+            <VStack spacing={4}>
+              <Text marginTop={"20px"}>Login</Text>
+              <FormControl>
+                <FormLabel 
+                  fontSize="0.8rem" 
+                  color="grey" 
+                  marginBottom="-2px"
+                  marginTop={"10px"} >Email</FormLabel>
+                <Input type="text" 
+                  display={"flex"}
+                  flexDirection={"column"}
+                  name='email'
+                  value={loginEmail}
+                  id='emailField'
+                  onChange={handleLoginInputChange}
+                />
+                <FormLabel 
+                  fontSize="0.8rem" 
+                  color="grey" 
+                  marginBottom="-2px"
+                  marginTop={"20px"} >Password</FormLabel>
+                <Input type="password" 
+                  display={"flex"}
+                  flexDirection={"column"}
+                  value={loginPassword}
+                  name='password'
+                  id='passwordField'
+                  onChange={handleLoginInputChange}
+                />
+                <Button 
+                  fontSize={"0.7rem"}
+                  _hover={{color: "black"}}
+                  textDecoration={"underline"}
+                  variant="link"
+                  onClick={handleForgotPassword}
+                >
+                  Forgot Password?
+                </Button>
+              </FormControl>
+                <Button 
+                  type="submit"
+                  bg="#EDF2F7" 
+                  _hover={{bg:"#024041", color: "white"}}
+                  margin={"10px"}
+                  onClick={handleLogin}
+                  >Login</Button>
+            </VStack>
+          </form>
+          <Link 
+            marginBottom={"20px"}
+            textDecoration={"underline"}
+            fontSize={"0.7rem"} 
+            onClick={() => setIsRegistering(true)}>
+            Sign up instead
+          </Link>
+        </Flex> :
+        // Register form
+        <Flex 
+          bg={"#a8a3a3"}
+          width={"280px"}
+          border={"2px solid white"}
+          margin={"10px"}
+          flexDirection={"column"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          padding={"10px"}
+          fontSize={"1.5rem"}
+          borderRadius={"10px"}
+        >
+          <form onSubmit={handleRegistering}>
+            <VStack spacing={4}>
+              <Text marginTop={"20px"}>Register</Text>
+              <FormControl>
+                <FormLabel 
+                  fontSize="0.8rem" 
+                  color="grey" 
+                  marginBottom="-2px"
+                  marginTop={"10px"} >Email</FormLabel>
+                <Input type="text" 
+                  required
+                  display={"flex"}
+                  flexDirection={"column"}
+                  id='regEmailField'
+                  name='email'
+                  value={email}
+                  onChange={handleInputChange}
+                />
+
+                <FormLabel 
+                  fontSize="0.8rem" 
+                  color="grey" 
+                  marginBottom="-2px"
+                  marginTop={"20px"} >Password</FormLabel>
+                <Input type="password" 
+                  required
+                  display={"flex"}
+                  flexDirection={"column"}
+                  onChange={handleInputChange}                
+                  id='regPasswordField'
+                  name='password'
+                  value={password}
+                />
+
+                <FormLabel 
+                  fontSize="0.8rem" 
+                  color="grey" 
+                  marginBottom="-2px"
+                  marginTop={"20px"} >Confirm Password</FormLabel>
+                <Input type="password" 
+                  required
+                  display={"flex"}
+                  flexDirection={"column"}
+                  id='confirmPasswordField'
+                  name='confirmPassword'
+                  value={confirmPassword}
+                  onChange={handleInputChange}
+                />
+
+              </FormControl>
               <Button 
                 type="submit"
                 bg="#EDF2F7" 
                 _hover={{bg:"#024041", color: "white"}}
                 margin={"10px"}
-                marginBottom={"20px"}
-                onClick={handleLogin}
-              >Login</Button>
-          </VStack>
-        </form>
-      </Flex>
-      <Flex 
-        bg={"#a8a3a3"}
-        width={"300px"}
-        border={"2px solid white"}
-        margin={"10px"}
-        justifyContent={"center"}
-        padding={"10px"}
-        fontSize={"1.5rem"}
-        borderRadius={"10px"}
-      >
-        <form onSubmit={handleRegistering}>
-          <VStack spacing={4}>
-            <Text marginTop={"20px"}>Register</Text>
-            <FormControl>
-              <FormLabel 
-                fontSize="0.8rem" 
-                color="grey" 
-                marginBottom="-2px"
-                marginTop={"10px"} >Email</FormLabel>
-              <Input type="text" 
-                required
-                display={"flex"}
-                flexDirection={"column"}
-                id='regEmailField'
-                name='email'
-                value={email}
-                onChange={handleInputChange}
-              />
+                >Register</Button>
+            </VStack>
+          </form>
+          <Link 
+            marginBottom={"20px"}
+            textDecoration={"underline"}
+            fontSize={"0.7rem"} 
+            onClick={() => setIsRegistering(false)}>
+            Login instead
+          </Link>
+        </Flex>
+      )}
 
-              <FormLabel 
-                fontSize="0.8rem" 
-                color="grey" 
-                marginBottom="-2px"
-                marginTop={"20px"} >Password</FormLabel>
-              <Input type="password" 
-                required
-                display={"flex"}
-                flexDirection={"column"}
-                onChange={handleInputChange}                
-                id='regPasswordField'
-                name='password'
-                value={password}
-              />
-
-              <FormLabel 
-                fontSize="0.8rem" 
-                color="grey" 
-                marginBottom="-2px"
-                marginTop={"20px"} >Confirm Password</FormLabel>
-              <Input type="password" 
-                required
-                display={"flex"}
-                flexDirection={"column"}
-                id='confirmPasswordField'
-                name='confirmPassword'
-                value={confirmPassword}
-                onChange={handleInputChange}
-              />
-
-            </FormControl>
-            <Button 
-              type="submit"
-              bg="#EDF2F7" 
-              _hover={{bg:"#024041", color: "white"}}
-              margin={"10px"}
-              marginBottom={"20px"}
-            >Register</Button>
-          </VStack>
-        </form>
-      </Flex>
     </Flex>
   )
 }

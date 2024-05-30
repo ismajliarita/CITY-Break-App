@@ -29,9 +29,10 @@ async function createOrder(req, res, next) {
   try{
     const orderItems = req.body.orderItems;
     const totalCost = req.body.totalCost;
+    const scheduleDate = req.body.scheduleDate;
     const userId = req.jwtUserId;
     
-    const order = await OrdersRepo.createOrder(orderItems, totalCost, userId);
+    const order = await OrdersRepo.createOrder(orderItems, totalCost, userId, scheduleDate);
 
     res.status(200).json({ data: order });
   } catch(error){
@@ -49,9 +50,33 @@ async function getOrders(req, res, next) {
   }
 }
 
+async function getIncomingOrders(req, res, next) {
+  try{
+    const id = req.jwtUserId;
+
+    const orders = await OrdersRepo.getIncomingOrders(id);
+
+    res.status(200).json({ data: orders });
+  }catch(error){
+    next(error);
+  }
+}
+
+async function getOrderItems(req, res, next) {
+  try{
+    const id = req.params.id;
+    const orderItems = await OrdersRepo.getOrderItems(id);
+    res.status(200).json({ data: orderItems });
+  }catch(error){
+    next(error);
+  }
+}
+
 module.exports = {
   getFinishedOrders,
   createOrderAsAdmin,
   createOrder,
   getOrders,
+  getIncomingOrders,
+  getOrderItems,
 }

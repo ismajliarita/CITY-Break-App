@@ -28,6 +28,18 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      isVerified: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      verificationCode: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      verificationTokenExpiry: {
+        type: Sequelize.DATE,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -96,6 +108,11 @@ module.exports = {
         allowNull: false,
       },
       isFinished: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      isTaken: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,

@@ -26,6 +26,8 @@ export default function Admin () {
   const auth = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage, setUsersPerPage] = useState(10);
 
   useEffect(() => {
     auth.isLoggedIn || navigate('/auth');
@@ -50,35 +52,37 @@ export default function Admin () {
       setUsers(users.filter(user => user.id !== id));
     });
   }
-  
 
   const filteredUsers = users.filter(user => 
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) || 
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const paginatedUsers = filteredUsers.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
+
   return(
     <Flex
       flexDirection="column"
-      justifyContent={"center"}
+      justifyContent={"space-between"}
+      minHeight={"90vh"}
       bg={"#a8a3a3"}
     >
-      <Text
-        display={"flex"}
-        justifyContent={"center"}
-        fontSize="3xl"
-        fontWeight="bold"
-        color="grey"
-        margin="20px"
-      >
-        Admin
-      </Text>
       <Flex
         justifyContent={"center"}
         marginTop={"20px"}
         flexDirection={"column"}
         alignItems={"center"}
       >
+        <Text
+          display={"flex"}
+          justifyContent={"center"}
+          fontSize="3xl"
+          fontWeight="bold"
+          color="grey"
+          margin="20px"
+        >
+          Admin
+        </Text>
         <Input 
           placeholder="Search by email or username" 
           width={"80%"} 
@@ -100,7 +104,7 @@ export default function Admin () {
             </Tr>
           </Thead>
           <Tbody>
-            {filteredUsers.map((user) => (
+            {paginatedUsers.map((user) => (
               <Tr key={user.id}>
                 <Td>{user.email}</Td>
                 <Td>{user.username}</Td>
@@ -115,6 +119,36 @@ export default function Admin () {
           </Tbody>
         </Table>
       </Flex>
+      <Box
+        display={"flex"}
+        justifyContent={"center"}
+        padding={"20px"}
+        alignItems={"center"}
+      >
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          className='next-prev-button'
+          disabled={currentPage === 1}
+          margin={"5px"}
+        >
+          Previous Page
+        </button>
+        <Text
+          marginInline={"20px"}
+          fontSize={"1.5rem"}
+          fontWeight={"bold"}
+        >
+          {currentPage}
+        </Text>
+        <button
+          className='next-prev-button'
+          onClick={() => setCurrentPage(currentPage + 1)}
+          margin={"5px"}
+          disabled={filteredUsers.length <= currentPage * usersPerPage}
+        >
+          Next Page
+        </button>
+      </Box>
     </Flex>
   )
 }
