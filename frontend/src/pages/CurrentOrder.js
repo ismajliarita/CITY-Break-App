@@ -42,7 +42,7 @@ export default function CurrentOrder () {
 
   const schedule = () => {
     const scheduleDate = date + " " + time;
-    createOrder(auth.token, orderItems, orderTotal, scheduleDate).then(() => {
+    createOrder(auth.token, orderItemIds, orderTotal, scheduleDate).then(() => {
       localStorage.removeItem("currentOrder");
       setOrderItems([]);
       setOrderTotal(0);
@@ -66,14 +66,19 @@ export default function CurrentOrder () {
         localStorage.removeItem("currentOrder");
         setAllItems([]);
         setOrderTotal(0);
+        setOrderItems([]);
       })
     }else{
-        onOpen();
+      onOpen();
     }
   };
 
   useEffect(() => {
     auth.isLoggedIn || navigate('/auth');
+
+    if(!localStorage.getItem("currentOrder")){
+      setOrderItems([]);
+    }
 
     const now = new Date();
     const currentDate = now.toISOString().split('T')[0];

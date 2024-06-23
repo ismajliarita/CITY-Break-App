@@ -55,25 +55,25 @@ export default function ItemCard (item) {
     e.preventDefault();
     
     const nameValue = nameRef.current.value;
-    let fileValue = fileInputRef.current.files[0];
     const priceValue = priceRef.current.value;
     const descriptionValue = descriptionRef.current.value;
     const amountValue = amountRef.current.value;
     const typeValue = typeRef.current.value;
+    let fileValue = fileInputRef.current.files[0];
 
-    if (!fileValue) {
+    if (!fileInputRef.current.files[0]) {
       fileValue = item.image;
     } 
-
-    updateItem(auth.token, item.id, e
-    //   {
-    //   name: nameValue, 
-    //   image: fileValue, 
-    //   price: priceValue, 
-    //   description: descriptionValue, 
-    //   amount: amountValue,
-    //   type: typeValue
-    // }
+    
+    updateItem(auth.token, item.id, 
+      {
+      name: nameValue, 
+      image: fileValue, 
+      price: priceValue, 
+      description: descriptionValue, 
+      amount: amountValue,
+      type: typeValue
+    }
   )
     .then((data) => {
       toast({
@@ -119,8 +119,16 @@ export default function ItemCard (item) {
       onNoteClose();
     }).catch((error) => {
       console.error('An error occurred:', error);
+    }).then(() => {
+      toast({
+        title: "Sent To Cart",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      })
     });
   }
+
   function handleAddToOrder() {
     if(!auth.user.isAdmin ) {
       onNoteOpen();

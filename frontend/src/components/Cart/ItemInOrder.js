@@ -2,7 +2,8 @@ import React, {useContext} from 'react';
 import {
   Flex,
   Button,
-  Text
+  Text,
+  Box,
 } from "@chakra-ui/react";
 import { AuthContext } from '../../context/auth-context';
 
@@ -42,23 +43,50 @@ export default function ItemInOrder ({item, setAllItems, setOrderTotal}) {
       alignItems={"center"}
       justifyContent={"space-between"}
     >
-      <Flex
-        justifyContent={"space-between"}
-        width={"80%"}
-        alignItems={"center"}
-      >
         <Text
           marginInline={"5px"}
           fontSize={"xl"}
           fontWeight={"bold"}
+          width={"150px"}
+          display={"flex"}
+          flexWrap={"wrap"}
         >{item.item_name}</Text>
         <Text
           fontSize={"sm"}
-          width={"250px"}
+          width={"150px"}
           display={"flex"}
           flexWrap={"wrap"}
-          maxHeight={"50px"}
+          maxH={"50px"}
+          overflowY={"scroll"}
+          css={{
+            '&::-webkit-scrollbar': {
+              width: '10px',
+            }
+          }}  
         >{item.description}</Text>
+
+
+      <Flex 
+        height={"60px"}
+        width={"140px"}
+        direction={"column"}
+      >
+        <Text fontSize={"0.7rem"}>Note:</Text>
+        <Box
+          overflowY={"scroll"}
+          width={"140px"}
+          fontSize={"0.8rem"}
+          css={{
+            '&::-webkit-scrollbar': {
+              width: '10px',
+            }
+          }}
+          bg={"rgba(125, 125, 125, 0.5)"}
+          borderRadius={"3px"}
+          padding={"5px"}
+        >
+          {item.note ? item.note : "No note"}
+        </Box>
       </Flex>
       <Flex
         justifyContent={"center"}

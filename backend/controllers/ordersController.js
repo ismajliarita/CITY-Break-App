@@ -72,6 +72,26 @@ async function getOrderItems(req, res, next) {
   }
 }
 
+async function setIsFinishedTrue(req, res, next) {
+  try{
+    const id = req.params.id;
+    await OrdersRepo.setIsFinishedTrue(id);
+    res.status(200).json({ message: "Order is finished" });
+  }catch(error){
+    next(error);
+  }
+}
+
+async function setIsTakenTrue(req, res, next) {
+  try{
+    const id = req.params.id;
+    await OrdersRepo.setIsTakenTrue(id);
+    res.status(200).json({ message: "Order is taken" });
+  }catch(error){
+    next(error);
+  }
+}
+
 module.exports = {
   getFinishedOrders,
   createOrderAsAdmin,
@@ -79,4 +99,6 @@ module.exports = {
   getOrders,
   getIncomingOrders,
   getOrderItems,
+  setIsFinishedTrue,
+  setIsTakenTrue,
 }

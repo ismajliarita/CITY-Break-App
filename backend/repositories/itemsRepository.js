@@ -44,19 +44,19 @@ const ItemsRepo = {
   
   async updateItem(itemId, itemData) {
     try {
-      console.log("ITEM DATA IN REPOSITORY: ",itemData);
       const item = await Item.findByPk(itemId);
-      if (!item) return;
+
+      if (!item) return;      
       item.set({
-        item_name: itemData.itemData.name,
-        description : itemData.itemData.description,
-        type: itemData.itemData.type,
-        price : itemData.itemData.price,
-        amount : itemData.itemData.amount === 0 || itemData.itemData.amount === "" ? null : itemData.itemData.amount,
+        item_name: itemData.name,
+        description : itemData.description,
+        price : itemData.price,
+        amount : itemData.amount === 0 || itemData.amount === "" ? null : itemData.amount,
       });
-      if (itemData.itemData.image) {
+
+      if (itemData.image !== null) {
         item.set({
-          image: itemData.itemData.image,
+          image: itemData.image,
         });
       }
       return await item.save();
@@ -64,6 +64,7 @@ const ItemsRepo = {
       throw error;
     }
   },
+
 
   async getItemImage(itemId){
     return await Item.findByPk(itemId, {

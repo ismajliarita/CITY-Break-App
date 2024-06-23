@@ -40,5 +40,14 @@ ordersRouter.get(
   OrdersController.getOrderItems,
 );
 
+ordersRouter.patch(
+  '/set-is-finished-true/:id',
+  OrdersController.setIsFinishedTrue,
+);
+
+ordersRouter.patch(
+  '/set-is-taken-true/:id',
+  OrdersController.setIsTakenTrue,
+);
 
 module.exports = ordersRouter;

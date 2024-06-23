@@ -18,9 +18,13 @@ function transformToJsonOrTextPromise(response) {
 async function sendRequest(url, { method = "GET", body, headers = {} }) {
   const options = {
     method,
-    headers: new Headers({ "content-type": "application/json", ...headers }),
-    body: body ? JSON.stringify(body) : null,
+    headers: new Headers({ ...headers }),
+    body: body instanceof FormData ? body : JSON.stringify(body),
   };
+
+  if (!(body instanceof FormData)) {
+    options.headers.set('Content-Type', 'application/json');
+  }
 
   return fetch(url, options).then((res) => {
     const jsonOrTextPromise = transformToJsonOrTextPromise(res);
@@ -51,7 +55,14 @@ export async function getItems() {
 
 export async function createItem(token, e) {
   const formData = new FormData(e.target);
-  console.log("FORM DATA IN API: ", formData);
+  
+
+  
+  for (var pair of formData.entries()) {
+    console.log(pair[0]+ ', ' + pair[1]); 
+  }
+
+
   return fetch(`${BACKEND_URL}/items/create-item`, {
     method: 'POST',
     headers: {
@@ -64,17 +75,23 @@ export async function createItem(token, e) {
   .then(response => response.data)
 }
 
-export async function updateItem(token, itemId, e) {
-  const formData = new FormData(e.target);
-  console.log("ITEM DATA IN API: ", itemData);
+export async function updateItem(token, itemId, itemData) {
+  const formData = new FormData();
+
+  for (const key in itemData) {
+    formData.append(key, itemData[key]);
+  }
+
+  for (var pair of formData.entries()) {
+    console.log(pair[0]+ ', ' + pair[1]); 
+  }
+
   return sendRequest(`${BACKEND_URL}/items/update-item/${itemId}`, {
-    method: "POST",
+    method: "PATCH",
     headers: {
       Authorization: "JWT " + token,
     },
-    body: {
-      itemData
-    },
+    body: formData,
   }).then((response) => response.data);
 }
 
@@ -184,6 +201,23 @@ export async function getOrderItems(token, orderId){
   }).then((response) => response.data);
 } 
 
+export async function setIsFinishedTrue(token, orderId){
+  return sendRequest(`${BACKEND_URL}/orders/set-is-finished-true/${orderId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: "JWT " + token,
+    },
+  }).then((response) => response.data);
+}
+
+export async function setIsTakenTrue(token, orderId){
+  return sendRequest(`${BACKEND_URL}/orders/set-is-taken-true/${orderId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: "JWT " + token,
+    },
+  }).then((response) => response.data);
+}
 
 //----------------- USERS -----------------//
 export async function verifyEmail(verificationCode){

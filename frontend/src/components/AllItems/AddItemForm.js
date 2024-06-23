@@ -34,7 +34,7 @@ export default function AddItemForm() {
       const file = files[0];
       const fileType = file.type; 
       const fileSize = file.size; 
-  
+      console.log("FILE FOR IMAGE TO CREAKE ITEM: ", fileInputRef.current.files[0]);
       // validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']; 
       if (!allowedTypes.includes(fileType)) {

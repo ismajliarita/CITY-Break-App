@@ -13,20 +13,39 @@ import {
 } from "@chakra-ui/react";
 import Placeholder from "../media/profile-placeholder.jpg";
 import React, { useContext, useState, useRef, useEffect } from 'react';
-import { changeUsername, changePassword, deleteUser } from '../api';
+import { changeUsername, changePassword, deleteUser, getOrders, getUser } from '../api';
 import { AuthContext } from "../context/auth-context";
 import { isTokenExpired } from "../util/helpers";
+import Order from "../components/OrderHistory/Order";
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile () {
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    // console.log("auth", auth);
     if (!auth.isLoggedIn) {
       navigate("/auth");
     }
+    getOrders(auth.token, auth.user.id).then((data) => {
+      Promise.all(data.map((order) => getUser(auth.token, order.user_id)))
+        .then((users) => {
+          const ordersWithUsers = data.map((order, index) => {
+            return { ...order, user: users[index] };
+          });
+          
+          const filteredOrders = ordersWithUsers.filter(
+            order => 
+            order.isFinished && 
+            !order.isTaken && 
+            !order.user.isAdmin &&
+            auth.user.id === order.user.id,
+          );
+
+          setOrders(filteredOrders);
+        });
+    });
   }, [auth.isLoggedIn]);
 
   const handleChangeUsername = () => {
@@ -73,6 +92,7 @@ export default function Profile () {
           duration: 9000,
           isClosable: true,
         });
+        window.location.reload();
       });
     }
   };
@@ -118,6 +138,7 @@ export default function Profile () {
             auth.setIsLoggedIn(false);
             localStorage.removeItem("city-user");
             navigate("/auth");
+            window.location.reload();
           }}
           colorScheme="red"
           margin={"5px"}
@@ -145,6 +166,20 @@ export default function Profile () {
         >
           Delete Account
         </Button>
+      </Flex>
+
+      <Flex
+        marginTop={"40px"}
+        direction={"column"}
+      >
+      {orders.map((order) => {
+        return (
+          <Order 
+            key={orders.indexOf(order)}
+            order={order}
+          />
+        );
+      })}
       </Flex>
     </VStack>
   </Flex>

@@ -34,12 +34,14 @@ export default function OrderHistory() {
 
   const sortedAndSearchedOrders = allOrders
   .filter(order => !searchDate || new Date(order.order_date).toDateString() === new Date(searchDate).toDateString())
-  .sort((a, b) => a.isFinished - b.isFinished)
-  .sort((a, b) => 
-    sortOrder === 'desc' ? 
-    new Date(b.order_date) - new Date(a.order_date) : 
-    new Date(a.order_date) - new Date(b.order_date)
-  )
+  .sort((a, b) => {
+    if (a.isTaken === b.isTaken) {
+      return sortOrder === 'desc' ? 
+        new Date(b.order_date) - new Date(a.order_date) : 
+        new Date(a.order_date) - new Date(b.order_date);
+    }
+    return a.isTaken ? 1 : -1;
+  });
 
   const paginatedOrders = sortedAndSearchedOrders.slice((currentPage - 1) * ordersPerPage, currentPage * ordersPerPage);
 

@@ -20,7 +20,7 @@ async function createItem(request, response, next) {
       image: request.file.buffer,
     };
 
-    console.log("IMAGE IN CONTROLLER CREATE_ITEM: ", itemData.image);
+    console.log("ICREATE_ITEM DATA CONTROLLER: ", itemData);
     
     const item = await ItemsRepo.createItem(itemData);
     response.status(200).json({ data: item	 });
@@ -38,11 +38,12 @@ async function updateItem(request, response, next) {
 
     if (!admin || admin.isAdmin == false)
       return next(new HttpError("Not Authorised!", 403));
-    const data = {
+
+    let data = {
       ...request.body,
-      image: request.file ? request.file.buffer : undefined,
+      image: request.file ? request.file.buffer : null,
     };
-    console.log("IMAGE IN CONTROLLER UPDATE_ITEM: ", data.image);
+
 
     const item = await ItemsRepo.updateItem(itemId, data);
 

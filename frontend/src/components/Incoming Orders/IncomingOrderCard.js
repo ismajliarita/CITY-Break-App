@@ -25,17 +25,49 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 import { AuthContext } from '../../context/auth-context';
-import { getOrderItems } from "../../api";
+import { getOrderItems, setIsFinishedTrue, getUser } from "../../api";
 
 export default function IncomingOrderCard ({order}) {
   const auth = useContext(AuthContext);
   const [orderItems, setOrderItems] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  let userId = auth.user.id;
   const toast = useToast();
+  const [orderUser, setOrderUser] = useState("ADMIN");
+
+  useEffect(() => {
+    getUser(auth.token, order.user_id).then((user) => {
+      if(user.isAdmin == true){
+        setOrderUser(`ADMIN`)
+      }else{
+        setOrderUser(`${user.username}`)
+      }
+    })
+  }, [])
+
+  let dateTime = order.order_date;
+  let [date, time] = dateTime.split("T");
+  time = time.split(".")[0]; 
+  let [hours, minutes] = time.split(":");
+  time = `${hours}:${minutes}`;
+
+  let dateObj = new Date(date);
+
+  let formattedDate = ("0" + dateObj.getDate()).slice(-2) + "-" + ("0" + (dateObj.getMonth() + 1)).slice(-2) + "-" + dateObj.getFullYear();
+  
+  date = formattedDate;
+
+
 
   async function notifyStudent(){
-
+    setIsFinishedTrue(auth.token, order.id).then(() => {
+      toast({
+        title: "Student has been notified!",
+        status: "success",
+        duration: 6000,
+        isClosable: true,
+      });
+      onClose();
+    });
   }
 
   async function handleCross(){
@@ -52,7 +84,6 @@ export default function IncomingOrderCard ({order}) {
   return(
     <>
       <Flex 
-        // flexDirection="column"
         alignItems={"center"} 
         border="2px solid grey"
         borderRadius="10px"
@@ -66,23 +97,34 @@ export default function IncomingOrderCard ({order}) {
           alignItems="center"
           justifyContent={"center"}
         >
-          <Text
-            alignContent={"center"}
-            fontSize="1rem"
-            marginInline={"10px"}
-            fontWeight="bold"
-          >{order.id}</Text>
-          <Text
-            alignContent={"center"}
-            fontSize="1rem"
-            marginInline={"10px"}
-            fontWeight="bold"
-          >{order.order_date}</Text>
-          <Text
-            alignContent={"center"}
-            fontSize="1rem"
-            marginInline={"10px"}
-          >{order.total_cost}€</Text>
+          <Text 
+            fontSize={"1.3rem"}
+            fontWeight={"bold"}
+            marginInline={"20px"}
+          >Order {order.id}</Text>
+          <Flex
+            direction={"column"}
+            alignItems={"center"}
+            width={"150px"}
+          >
+            <Text fontSize={"0.7rem"}>
+              Created by: 
+            </Text>
+            <Text
+              textAlign={"center"}  
+            >
+              {orderUser}
+            </Text>
+          </Flex>
+          <Flex
+            direction={"column"}
+            alignItems={"center"}
+            width={"150px"}
+          >
+            <Text fontSize={"0.7rem"}>Scheduled for:</Text>
+            <Text>{date}</Text>
+            <Text>{time}</Text>
+          </Flex>
           
         </Box>
         <Flex 

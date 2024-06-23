@@ -96,9 +96,7 @@ export default function Auth () {
   async function handleLogin(e) {
     e.preventDefault();
     loginUser({email: loginEmail, password: loginPassword})
-    .then((response) => {
-      // console.log("loginEmail: ", loginEmail, " loginPassword: ", loginPassword);
-      
+    .then((response) => {      
       localStorage.setItem('city-token', response.token);
       localStorage.setItem('city-user', JSON.stringify(response.user));
 
@@ -106,10 +104,9 @@ export default function Auth () {
 
       auth.setToken(response.token);
       auth.setUser(response.user);
-      // console.log("response when u login or register", response);
-
       
       navigate('/profile');
+      window.location.reload();
     })
     
   }
